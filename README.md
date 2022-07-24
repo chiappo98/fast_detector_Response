@@ -18,7 +18,16 @@ SAND in turn has three modules enclosed in a superconducting magnet: a Straw Tub
 This python program has 5 options and takes as input 3 parameters.
 The submission comand therefore is
 
->python3 fast_resp.py 
+>python3 fast_resp.py <config_file> <input_ROOT_file> <output_drdf_file> -nc
+-e <event_number> -i <idrun>
+
+where 
+- **config_file**: contains some parameters for the DAQ simulation, such as the PDE and cross-talk probability for the SiPM sensors, togheter with their physical dimensions. The file name is *config.xml*.
+- **input_ROOT_file**: is a file named *sensors.root*, which contains all the information about the photons propagating from the charged particles trajetories towards the sensors surface. In particular it provides the energy, arrival time and inpact coordinates of each photon.
+- **output_drdf_file**: is usually a file named *response.drdf*. It is an image file in a custom-made format. The single response.drdf file contains the 2D plot of all the sensor matrices with the number of photons detected on each SiPM and the arrival time of the first one of them.
+- **-nc** option: this options allows the user to retrive the total number of photons arrived on each SiPM without considering, for example, PDE or cross-talk.
+- **-e** option: allows the user to specify the maximum number of event to be computed, if different from the number overall one.
+- **-i** option: 
 
 ### Submission through bash script
 An easier and more useful way to submit the detector response is using the bash script *launch_resp.sh*, which creates automatically the folders and allows t
