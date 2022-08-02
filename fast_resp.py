@@ -27,92 +27,77 @@ def load_sensor_data(inFile, treekey, evn):  #arguments are: filename, camera, e
     treename = treekey.GetName()
     tree = inFile.Get(treename)             #select camera
     #print(treename)
-    sensor_data = []
+    #sensor_data = np.empty((0,5),float)
     tree.GetEntry(evn)                      #select event
-    #print( tree.idEvent)
-    for i in range(len(tree.energy)):       #loop over photons detected
-        en = tree.energy[i]
-        t = tree.time[i] 
-        x = tree.x[i]
-        y = tree.y[i]
-        z = tree.z[i]
-        ph = (en, t, x, y, z)
-        sensor_data.append(ph)
+    en = np.array(tree.energy)
+    t = np.array(tree.time)
+    x = np.array(tree.x)
+    y = np.array(tree.y)
+    z = np.array(tree.z)
+    sensor_data = np.vstack((en,t,x,y,z)).T
     return sensor_data, treename            #output: information on photons + camera name
 
 def assign_channel(photons, geom):          #arguments: sensor_data, CONFIG     
     """assigns photon to corresponding matrix channel"""    
     shape = geom['matrix']                  #SiPM matrix is 32x32
     nch = shape[0] * shape[1]               #number of channels 
-    t, en = np.empty(0), np.empty(0)
-    sipm_channels = {"ch"+str(ch): [en,t] for ch in range(0, nch)}
     xside = shape[0] * (geom['cellsize'] + 2 * geom['celledge'])/ 2         #find coordinates of matrix edge 
     yside = shape[1] * (geom['cellsize'] + 2 * geom['celledge'])/ 2         #wrt the centre of the sensor
     
-    for p in photons:
-        en, t, x, y, z = p
-        if z== geom['zplane']:                                                                      #photon hits on (front) surface                
-            if (abs(x)>=0 and abs(x) <= xside):                                                     #photon hits matrix area on x axis
-                xedge = abs( x)  % (geom['cellsize'] + geom['celledge'])                            #modulus of absolute position
-                if (xedge >= geom['celledge'] and xedge<=(geom['cellsize']+geom['celledge'])):           #photon hits active cell area on x axis
-                    if (abs(y)>=0 and abs(y) <= yside):                                                  #photon hits matrix area on y axis
-                        yedge = abs(y) % (geom['cellsize'] + geom['celledge'])
-                        if (yedge >= geom['celledge'] and yedge<=(geom['cellsize']+geom['celledge'])):    #photon hits active cell area on y axis                
-                            #assign channel:
-                            cell_x = int( x // (geom['cellsize'] + 2 * geom['celledge']) + (shape[0] / 2))  #floor division --- x is the centre of the matrix
-                            cell_y = int( -y // (geom['cellsize'] + 2 * geom['celledge']) + (shape[1] / 2)) #y-axis is flipped in image-like coordinates
-                            ch = "ch" + str(cell_y * shape[0] + cell_x)         #each channel identified by a SINGLE NUMBER from 0 to 1023
-                            #sipm_channels[ch][0] = np.append(sipm_channels[ch][0],en)
-                            sipm_channels[ch][1] = np.append(sipm_channels[ch][1],t)                        #create array of tuples
-                
-    return sipm_channels
+    z_thres = np.where(photons[:,4]== geom['zplane'])
+    xedge = np.remainder(photons[:,2][z_thres],(geom['cellsize'] + geom['celledge']))        
+    x_thres = np.where((xedge >= geom['celledge']) & (xedge<=(geom['cellsize']+geom['celledge'])))
+    cut1 = np.intersect1d(z_thres,x_thres)                                                      
+    yedge = np.remainder(photons[:,3][cut1],(geom['cellsize'] + geom['celledge']))           
+    y_thres = np.where((yedge >= geom['celledge']) & (yedge<=(geom['cellsize']+geom['celledge'])))
+    cut2 = np.intersect1d(cut1,y_thres)
+    
+    cell_x = np.floor_divide(photons[:,2][cut2],(geom['cellsize'] + 2 * geom['celledge']) + (shape[0] / 2))
+    cell_y = np.floor_divide(photons[:,3][cut2],(geom['cellsize'] + 2 * geom['celledge']) + (shape[1] / 2))
+    time = photons[:,1][cut2]
+    ch = cell_y * shape[0] + cell_x         #each channel identified by a SINGLE NUMBER from 0 to 1023
+    return time, ch
 
-def count_photons(photons, config ):                                            #argument: ph. channel, energy, time 
+def count_photons(time, ch, config ):                                            #argument: ph. channel, energy, time 
     """considering pde only for sipm response, for debugging/fast execution"""
     phlist = []
-    #phCamTot=0
-    for channel in photons:
-        #print("Worker process id : {0}".format(os.getpid()))
-        nph = 0 
-        #phtimes = np.empty(0)
-        if photons[channel][1] != []:
-            tmin = np.amin(photons[channel][1])        #eliminating photons[channel][1]
-            time = np.where(photons[channel][1]<tmin+config['integrTime'])           #eliminating photons[channel][1]
-            t_num = np.count_nonzero(photons[channel][1]<tmin+config['integrTime'])
-            time_index = np.asarray(time)
-            
-            pde_ph = np.count_nonzero(np.random.uniform(0,1,t_num) < config['pde127nm'])
-            cross_ph = np.count_nonzero(np.random.uniform(0,1,pde_ph) < config['pcross'])
-            nph = pde_ph + cross_ph + sum(np.random.normal(0,config['phgain'],pde_ph+cross_ph))
-            phtimes_pde = photons[channel][1][time_index[0][0:pde_ph]]
-            phtimes_cross = photons[channel][1][time_index[0][0:cross_ph]]
-            phtimes = np.concatenate((phtimes_pde,phtimes_cross))
-        if nph < 1:          #can be seen as threshold 
-            count_result = (0, np.nan)
-        elif phtimes.size == 0:
-            count_result = (0, np.nan)
+    for c in range(1024):
+        ph = np.where(ch==c)               #find all photons that reached channel "c"        
+        if (ph[0].size!=0):                  #---->>>correct??
+            tmin = np.amin(time[ph])            
+            time_cut = np.where(time[ph]<tmin+config['integrTime'])            #find all photons of the channel which arrived within 200ns
+            t_num = np.count_nonzero(time[ph]<tmin+config['integrTime'])        
+            pde_ph = np.count_nonzero(np.random.uniform(0,1,t_num) < config['pde127nm'])      #apply the pde over the time-allowed photons
+            cross_ph = np.count_nonzero(np.random.uniform(0,1,pde_ph) < config['pcross'])     #apply cross-talk over the pde-allowed photons
+            nph = pde_ph + cross_ph + sum(np.random.normal(0,config['phgain'],pde_ph+cross_ph))    #count the resulting number of photons + gain
+           
+            phtimes_pde = time[time_cut[0:pde_ph]]                               #extract from time array arrival times of resulting number of photons 
+            phtimes_cross = time[time_cut[0:cross_ph]]            #add time of photons added with cross-talk
+            phtimes = np.concatenate((phtimes_pde,phtimes_cross))                     #modify............
+            if nph < 1:          #can be seen as threshold 
+                count_result = (0, np.nan)
+            else:
+                count_result = (nph, tmin)                           #time of first photon (amin returns minimum value of the array)
         else:
-            count_result = (nph, np.amin(phtimes))                           #time of first photon (amin returns minimum value of the array)
-            #phCamTot+=nph
-        phlist.append(count_result)         
-    #print("phCamTot=",phCamTot)                                    
+            count_result = (0, np.nan)
+        phlist.append(count_result)                                   
     return phlist
 
 def count_photons_no_cut(photons, config ):                                            #argument: ph. channel, energy, time 
     """considers simply the total number of photons reaching each camera"""
     phlist = []
-    #phCamTot=0
-    for channel in photons:
-        #print("Worker process id : {0}".format(os.getpid()))
-        nph = photons[channel][1].size
-        phtimes = photons[channel][1]
-        if nph < 1:          #can be seen as threshold 
-            count_result = (0, np.nan)
+    for c in range(1024):
+        ph = np.where(ch==c)               #find all photons that reached channel "c"        
+        if (ph[0].size!=0):                  #---->>>correct??
+            tmin = np.amin(time[ph])            
+            nph = time[ph].size               #modify............
+            if nph < 1:          #can be seen as threshold 
+                count_result = (0, np.nan)
+            else:
+                count_result = (nph, tmin)                           #time of first photon (amin returns minimum value of the array)
         else:
-            count_result = (nph, np.amin(phtimes)) 
-            #phCamTot+=nph
-        phlist.append(count_result) 
-    #print("phCamTot=",phCamTot)
+            count_result = (0, np.nan)
+        phlist.append(count_result)         
     return phlist
 
 def ph_num(phlist):
@@ -134,10 +119,10 @@ def main_evn(inFile,klist,evn,drdffile):
              if key.GetName() != 'commit_hash':
                  #t0 = time.perf_counter()
                  sensor_data, sensor_name= load_sensor_data(inFile, key, evn)
-                 sensor_data = assign_channel(sensor_data, CONFIG)           #output energy+time
+                 t_arr, sensor_data = assign_channel(sensor_data, CONFIG)           #output energy+time
                  #t0 = time.perf_counter()
                  if (args.nocut):
-                     detected_ph_time = count_photons_no_cut(sensor_data, CONFIG)  
+                     detected_ph_time = count_photons_no_cut(t_arr, sensor_data, CONFIG)  
                      #t0 = time.perf_counter()
                      #n_ph = ph_num(detected_ph_time)
                      #tot_ph = np.append(tot_ph,n_ph)
@@ -146,7 +131,7 @@ def main_evn(inFile,klist,evn,drdffile):
                      image = drdf.Image(img)
                      drdffile.add_image(sensor_name, image)
                  else: 
-                     detected_ph_time = count_photons(sensor_data, CONFIG)       #list of : nph + timeof first arrival
+                     detected_ph_time = count_photons(t_arr, sensor_data, CONFIG)       #list of : nph + timeof first arrival
                      #t0 = time.perf_counter()
                      #n_ph = ph_num(detected_ph_time)
                      #tot_ph = np.append(tot_ph,n_ph)
