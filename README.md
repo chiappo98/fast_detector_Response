@@ -18,8 +18,8 @@ SAND in turn has three modules enclosed in a superconducting magnet: a Straw Tub
 This python program has 5 options and takes as input 3 parameters.
 The submission comand therefore is
 
->python3 fast_resp.py <config_file> <input_ROOT_file> <output_drdf_file> -nc
--e <event_number> -i <idrun>
+`python3 fast_resp.py <config_file> <input_ROOT_file> <output_drdf_file> -nc
+-e <event_number> -i <idrun>`
 
 where 
 - **config_file**: contains some parameters for the DAQ simulation, such as the PDE and cross-talk probability for the SiPM sensors, togheter with their physical dimensions. The file name is *config.xml*.
@@ -29,7 +29,21 @@ where
 - **-e** option: allows the user to specify the maximum number of event to be computed, if different from the number overall one.
 - **-i** option: 
 
-### Submission through bash script
+The input file obtained through the processing of a GEANT4 simulation of a neutrino interaction inside liquid Argon with other programs, which leads to the sensors.root file. Since they are not the result of my work I won't upload here the whole simulation chain scripts.
+  
+### Submission on Personal Computer
+In order to be able to submit this code on your PC, the following requirements are essential:
+- Linux or WSL 
+- Python3 
+- PyROOT module 
+- drdf module (go to the dedicated Section)
+- a *sensor.root* input file (an example set is already provided)
+
+
+  
+### Submission on Virtual Machine
+
+### Submission on HTCondor through bash script
 An easier and more useful way to submit the detector response is using the bash script *launch_resp.sh*, which creates automatically the folders and allows t
 
 ## The drdf module
