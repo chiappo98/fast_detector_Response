@@ -1,29 +1,32 @@
 #!/bin/bash
-while getopts "i:d:n:" o; do
+while getopts "i:f:d:n:" o; do      
   case "$o" in
     i)  INPUT=${OPTARG};;
+    #s)  SCRIPT_FOLDER=${OPTARG};;
+    f)  OUT_PATH=${OPTARG} ;;
     d)  NEW_DIR=${OPTARG} ;;
     n)  REP_NUM=${OPTARG} ;;
   esac
 done
-##NEW_DIR=test2_dir
-##INPUT=/storage/gpfs_data/neutrino/SAND-LAr/SAND-LAr-OPTICALSIM-PROD/GRAIN/calorimetry/GPC_prod/GENIE_V2/test_1.0.1/intermediate/inter_996/sensors_996.root 
-SCRIPT_FOLDER=/storage/gpfs_data/neutrino/SAND-LAr/SAND-LAr-GRAIN-CALORIMETRY/scratch/fastCalo_submission/${NEW_DIR}
-SCRIPT_PATH=/storage/gpfs_data/neutrino/SAND-LAr/SAND-LAr-GRAIN-CALORIMETRY/scratch/fastCalo_submission/
-OUTPUT_FOLDER=/storage/gpfs_data/neutrino/SAND-LAr/SAND-LAr-GRAIN-CALORIMETRY/scratch/fastCalo_submission/${NEW_DIR}/output
-CONFIG=/storage/gpfs_data/neutrino/SAND-LAr/SAND-LAr-GRAIN-CALORIMETRY/scratch/fastCalo_submission/config.xml
-EXECUTABLE=/storage/gpfs_data/neutrino/SAND-LAr/SAND-LAr-GRAIN-CALORIMETRY/scratch/fastCalo_submission/drdf.py
-LOGS_FOLDER=/storage/gpfs_data/neutrino/SAND-LAr/SAND-LAr-GRAIN-CALORIMETRY/scratch/fastCalo_submission/${NEW_DIR}/log
-TMP_LOG=$LOGS_FOLDER/tmp_log
+##NEW_DIR=/mnt/c/Users/Pc/SCexam/productions/test1
+##INPUT=/mnt/c/Users/Pc/SCexam/edeo200_203/intermediate/inter_0/sensors_0.root 
+##SCRIPT_FOLDER=/mnt/c/Users/Pc/SCexam/fast_detector_Response/
+
+#SCRIPT_FOLDER=/storage/gpfs_data/neutrino/SAND-LAr/SAND-LAr-GRAIN-CALORIMETRY/scratch/fastCalo_submission/${NEW_DIR}
+#SCRIPT_PATH=/storage/gpfs_data/neutrino/SAND-LAr/SAND-LAr-GRAIN-CALORIMETRY/scratch/fastCalo_submission/
+#OUTPUT_FOLDER=/storage/gpfs_data/neutrino/SAND-LAr/SAND-LAr-GRAIN-CALORIMETRY/scratch/fastCalo_submission/${NEW_DIR}/output
+SCRIPT_FOLDER=${OUT_PATH}/${NEW_DIR}
+OUTPUT_FOLDER=${OUT_PATH}/${NEW_DIR}/output
+CONFIG=${SCRIPT_FOLDER}/fast_detector_Response/config.xml
+EXECUTABLE=${SCRIPT_FOLDER}/fast_detector_Response/drdf.py
+LOGS_FOLDER=${OUT_PATH}/${NEW_DIR}/logs
+TMP_LOG=${LOGS_FOLDER}/tmp_log
 
 function setup_prod_dir() {
   mkdir $SCRIPT_FOLDER
   mkdir $LOGS_FOLDER
   mkdir $OUTPUT_FOLDER
-  if [[ ! -d "/home/NEUTRINO/chiappon/calorimetry/${NEW_DIR}" ]]; then
-    mkdir -p /home/NEUTRINO/chiappon/calorimetry/${NEW_DIR}
-  fi
-}
+  }
 
 function check_errors() {
   STATUS="$?"
@@ -127,7 +130,7 @@ touch "$SCRIPT_FOLDER/fastCalo.sub"
 > "$SCRIPT_FOLDER/fastCalo.sub"
 echo "environment             = \"PYTHONPATH=/opt/exp_software/neutrino/PYTHON3_PACKAGES\"" >> "$SCRIPT_FOLDER/fastCalo.sub"
 # echo "transfer_input_files    =  " >> "$SCRIPT_FOLDER/.sub"
-echo "request_cpus = 4" >> "$SCRIPT_FOLDER/fastCalo.sub"
+echo "request_cpus = 1" >> "$SCRIPT_FOLDER/fastCalo.sub"
 echo "request_memory = 8192" >> "$SCRIPT_FOLDER/fastCalo.sub"
 echo "executable              = "$SCRIPT_FOLDER/fastCalo.sh"" >> "$SCRIPT_FOLDER/fastCalo.sub"
 #echo "transfer_input_files    = "$EXECUTABLE"" >> "$SCRIPT_FOLDER/fastCalo.sub"
