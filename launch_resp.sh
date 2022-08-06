@@ -1,10 +1,11 @@
 #!/bin/bash
-while getopts "i:f:d:n:" o; do      
+while getopts "i:f:d:e:n:" o; do      
   case "$o" in
     i)  INPUT=${OPTARG};;
     #s)  SCRIPT_FOLDER=${OPTARG};;
     f)  OUT_PATH=${OPTARG} ;;
     d)  NEW_DIR=${OPTARG} ;;
+    e)  MAX_EVN_NUM=${OPTARG} ;;
     n)  REP_NUM=${OPTARG} ;;
   esac
 done
@@ -123,7 +124,7 @@ echo "source /opt/exp_software/neutrino/ROOT/v6.20.00_py3/bin/thisroot.sh"  >> "
 echo "LD_LIBRARY_PATH="/opt/exp_software/neutrino/PYTHON3_PACKAGES/:/opt/exp_software/neutrino/ROOT/v6.20.00_py3/lib:$LD_LIBRARY_PATH""  >> "$SCRIPT_FOLDER/fastCalo.sh"
 echo "PATH="/opt/exp_software/neutrino/PYTHON3_PACKAGES/:/opt/exp_software/neutrino/ROOT/v6.20.00_py3/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:$PATH"" >> "$SCRIPT_FOLDER/fastCalo.sh"
 echo "MANPATH="/opt/exp_software/neutrino/ROOT/v6.20.00_py3/man:$MANPATH:"" >> "$SCRIPT_FOLDER/fastCalo.sh"
-echo "python3 $SCRIPT_PATH/fastCalo.py $CONFIG $INPUT $OUTPUT_FOLDER/response_cut.drdf > $LOGS_FOLDER/fastCalo.out.live 2> $LOGS_FOLDER/fastCalo.err.live" >> "$SCRIPT_FOLDER/fastCalo.sh"
+echo "python3 $SCRIPT_PATH/fastCalo.py $CONFIG $INPUT $OUTPUT_FOLDER/response_cut.drdf -e ${MAX_EVN_NUM} > $LOGS_FOLDER/fastCalo.out 2> $LOGS_FOLDER/fastCalo.err" >> "$SCRIPT_FOLDER/fastCalo.sh"
 
 # Create the job .sub file
 touch "$SCRIPT_FOLDER/fastCalo.sub"
@@ -162,10 +163,10 @@ for ((j=0;j<${REP_NUM};j++)); do
   echo $JOB_ID
   check_condor $JOB_ID 1
   echo "Job ${JOB_NUM} completed"
-  JOB_TIME=$(tail -n 1 $LOGS_FOLDER/fastCalo.out.live)
+  JOB_TIME=$(tail -n 1 $LOGS_FOLDER/fastCalo.out)
   #JOBNUMBER=$(head -n 2 $LOGS_FOLDER/tmp_log | tail -1)
   echo "Time for job ${JOB_NUM} : ${JOB_TIME}" >> $LOGS_FOLDER/time.log
-  #cut -d "---" <<< $LOGS_FOLDER/fastCalo.out.live > $OUTPUT_FOLDER/exe_time.txt
-  #grep -n 'number_of_ph=' $LOGS_FOLDER/fastCalo.out.live > $OUTPUT_FOLDER/exe_time.txt
+  #cut -d "---" <<< $LOGS_FOLDER/fastCalo.out > $OUTPUT_FOLDER/exe_time.txt
+  #grep -n 'number_of_ph=' $LOGS_FOLDER/fastCalo.out > $OUTPUT_FOLDER/exe_time.txt
   
 done
