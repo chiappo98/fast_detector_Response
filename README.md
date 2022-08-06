@@ -8,7 +8,7 @@
   - [Fast_resp installation](#fast_resp-installation)
   - [Launching a production](#launching-a-production)
     - [Submission on Virtual Machine](#submission-on-virtual-machine)
-- [HTCondor](#htcondor)
+    - [HTCondor](#htcondor)
 
 
 # Fast detector response
@@ -72,11 +72,10 @@ git@github.com:chiappo98/fast_detector_Response.git
 Before submitting a production pay attention to have installed python3, togheter with all the modules imported in `fast_resp.py`.
 
 ## Launching a production
-`fast_resp.py` takes in input 3 parameters and has 3 additional options.
+*fast_resp.py* takes in input 3 parameters and has 3 additional options.
 The submission comand therefore is
 ```
-python3 fast_resp.py <config_file> <input_ROOT_file> <output_drdf_file> -nc
--e <event_number> -i <idrun>
+python3 fast_resp.py <config_file> <input_ROOT_file> <output_drdf_file> -nc -e <event_number> -i <idrun>
 ```
 where 
 - `config_file`: contains some parameters for the DAQ simulation, such as the PDE and cross-talk probability for the SiPM sensors, togheter with their physical dimensions. The file name is *config.xml*.
@@ -99,12 +98,35 @@ Once logged on neutrino-01 you can launch the detector response through the bash
 ```
 bash launch_resp.sh -i <INPUT_file_PATH> -f <OUTPUT_folder_PATH> -d <OUTPUT_folder_NAME> -e <MAX_event_NUMBER> -n <NUMBER_of_REPETITIONS>
 ```
+where
+- `-e` is the same option given in the fast_resp.py, which allows to select the maximum number of events to be analysed.
+- `-n` gives the possibility to analyse the same set of events *n*-times.
+
+Notice that when specifying the *output_folder_path* you don't have to insert the name of the output folder, which is instead to be specified in the following argument.
+
 There is also the possibility to run the simulation in backgroud, using the commad
 ```
 nohup bash launch_resp.sh -i <INPUT_file_PATH> -f <OUTPUT_folder_PATH> -d <OUTPUT_folder_NAME> -e <MAX_event_NUMBER> -n <NUMBER_of_REPETITIONS> > out.log &
 ```
+The output structure is as follows:
+```bash
+- outputFolder                   # root folder of the output files
+    ├─ fast_resp.sub             # fast_resp submission file
+    ├─ fast_resp.sh              # fast_resp submission file
+    │   
+    ├─ logs  
+    │   ├─ tmp_log               # ??????????????????????
+    │   ├─ time.log              # contains the timing of the submitted jobs
+    │   ├─ fast_resp.log         # log of response conversion
+    │   ├─ fast_resp.err         # err of response conversion
+    │   └─ fast_resp.out         # out of response conversion
+    │   
+    └─ output
+        └─ response.drdf         # pixel signal output in drdf format 
+```
 
-# HTCondor
+### HTCondor
+
 
 ### Submission on Personal Computer
 In order to be able to submit this code on your PC, the following requirements are essential:
