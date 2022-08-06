@@ -31,16 +31,40 @@ GRAIN is a vessel containing ~1 ton of liquid Argon (LAr) in which neutrinos can
 In order to be able to run the simulation of the detector response, few steps are required:
 - Own an account to be submit job on the Virtual Machine
 - Have Pyhton3 installed on the VM together with the PyROOT module
-- install the **drdf** package on the VM
+- install the *drdf* package on the VM
 - Install the script on the VM
 
 ## Account request
+Depending on which organization you belong to, different accouts could be allowed:
+- A neutrino-01 account (look [here](https://www.cnaf.infn.it/en/users-faqs/) to read how to get one). This is needed to access the neutrino-01 CNAF machine. This is the machine from which the script will be executed and that will store all the output files. This account is mandatory to use fast_resp.
+- 
 
 ## Required softwares
+The only software which is not available publicly is the drdf package, necessary to build the output files. 
+Installing this repository the user will get automaticly the `drdf.py` file. For the ones who have an account on *baltig* the same software is available [here](https://baltig.infn.it/dune/sand-optical/drdf).
 
 ### The drdf module
 
+
 ## Fast_resp installation
+Login on the neutrino-01 machine. From a local terminal:
+```
+ssh <HTC_user>@bastion.cnaf.infn.it
+ssh <HTC_user>@ui-hpc.cr.cnaf.infn.it
+ssh <HTC_user>@131.154.161.32
+```
+this should put you in the folder
+```
+/home/NEUTRINO/<HTC_user>
+```
+
+from here, clone this repository in the preferred location
+```
+git@github.com:chiappo98/fast_detector_Response.git  
+```
+--------------------->>>>>>>>>>>to verify
+
+Before submitting a production pay attention to have installed python3, togheter with all the modules imported in `fast_resp.py`.
 
 ## Launching a production
 This python program has 5 options and takes as input 3 parameters.
