@@ -41,9 +41,13 @@ In order to be able to run the simulation of the detector response, few steps ar
 - Install the script on the VM
 
 ## Account request
-Depending on which organization you belong to, different accouts could be allowed:
-- A neutrino-01 account (look [here](https://www.cnaf.infn.it/en/users-faqs/) to read how to get one). This is needed to access the neutrino-01 CNAF machine. This is the machine from which the script will be executed and that will store all the output files. This account is mandatory to use fast_resp.
-- 
+In order submit the detector response on a Virtul Machine, an account is needed. Working on the detector response I access via ssh the Tier-1 user interfaces (UI) connecting to *bastion.cnaf.infn.it*, the CNAF gateway, using in particular the experiment dedicated UI called *neutrino-01*, which is devoted to the DUNE collaboration, to which I belong to.
+
+[Here](https://confluence.infn.it/pages/viewpage.action?pageId=40665299) you can find more information on the INFN-CNAF Tier-1.
+
+In the following sections hence I will refer to this particular VM, but the user is free to adapt the programs, and in particular the bash script *launch_resp.sh*, to the VM they have access to.
+
+The neutrino-01 machine adopts the HTCondor batch system (more on this in section [HTCondor](#htcondor)).
 
 ## Required softwares
 The only software which is not available publicly is the drdf package, necessary to build the output files. 
@@ -91,8 +95,6 @@ As already stressed, if the user's intent is run the response on his local devic
 
 ### Submission on Virtual Machine
 Together with the fast response, in this repository the user can find also the `launch_resp.sh` bash script. It provides a fast and easy way to submit the job on the VM and retrive information on its status, creating also new folders to store the response output.
-
-**NOTE: the bash script is set to work on the neutrino-01 machine. If you work on a different VM make sure to modify properly the submission and control commands. From now on I will mention only to the neutrino-01 machine, with the implicit reference to _your own_ virtual machine**
 
 Once logged on neutrino-01 you can launch the detector response through the bash script with the following command
 ```
