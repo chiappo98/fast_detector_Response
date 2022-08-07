@@ -108,43 +108,43 @@ function check_condor() {
   done
 }
 
-echo "running fastCalo with inputs: ${INPUT} ${NEW_DIR} ${REP_NUM}"
+echo "running fast_resp with inputs: ${INPUT} ${NEW_DIR} ${REP_NUM}"
 echo "Setting up production directory at $SCRIPT_FOLDER"
 setup_prod_dir
 check_errors
 
-#fastCalo response
-echo "Starting fastCalo response" #>> "$LOGS_FOLDER/calorimetry_response.log"
-touch $SCRIPT_FOLDER/fastCalo.sh
-> $SCRIPT_FOLDER/fastCalo.sh
-echo "#!/bin/bash" >> "$SCRIPT_FOLDER/fastCalo.sh"
-echo "#file name: .sh" >> "$SCRIPT_FOLDER/fastCalo.sh"
-echo "source /opt/exp_software/neutrino/env.sh"  >> "$SCRIPT_FOLDER/fastCalo.sh"
-echo "source /opt/exp_software/neutrino/ROOT/v6.20.00_py3/bin/thisroot.sh"  >> "$SCRIPT_FOLDER/fastCalo.sh"
-echo "LD_LIBRARY_PATH="/opt/exp_software/neutrino/PYTHON3_PACKAGES/:/opt/exp_software/neutrino/ROOT/v6.20.00_py3/lib:$LD_LIBRARY_PATH""  >> "$SCRIPT_FOLDER/fastCalo.sh"
-echo "PATH="/opt/exp_software/neutrino/PYTHON3_PACKAGES/:/opt/exp_software/neutrino/ROOT/v6.20.00_py3/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:$PATH"" >> "$SCRIPT_FOLDER/fastCalo.sh"
-echo "MANPATH="/opt/exp_software/neutrino/ROOT/v6.20.00_py3/man:$MANPATH:"" >> "$SCRIPT_FOLDER/fastCalo.sh"
-echo "python3 $SCRIPT_PATH/fastCalo.py $CONFIG $INPUT $OUTPUT_FOLDER/response_cut.drdf -e ${MAX_EVN_NUM} > $LOGS_FOLDER/fastCalo.out 2> $LOGS_FOLDER/fastCalo.err" >> "$SCRIPT_FOLDER/fastCalo.sh"
+#fast response
+echo "Starting fast_resp response" #>> "$LOGS_FOLDER/calorimetry_response.log"
+touch $SCRIPT_FOLDER/fast_resp.sh
+> $SCRIPT_FOLDER/fast_resp.sh
+echo "#!/bin/bash" >> "$SCRIPT_FOLDER/fast_resp.sh"
+echo "#file name: .sh" >> "$SCRIPT_FOLDER/fast_resp.sh"
+echo "source /opt/exp_software/neutrino/env.sh"  >> "$SCRIPT_FOLDER/fast_resp.sh"
+echo "source /opt/exp_software/neutrino/ROOT/v6.20.00_py3/bin/thisroot.sh"  >> "$SCRIPT_FOLDER/fast_resp.sh"
+echo "LD_LIBRARY_PATH="/opt/exp_software/neutrino/PYTHON3_PACKAGES/:/opt/exp_software/neutrino/ROOT/v6.20.00_py3/lib:$LD_LIBRARY_PATH""  >> "$SCRIPT_FOLDER/fast_resp.sh"
+echo "PATH="/opt/exp_software/neutrino/PYTHON3_PACKAGES/:/opt/exp_software/neutrino/ROOT/v6.20.00_py3/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:$PATH"" >> "$SCRIPT_FOLDER/fast_resp.sh"
+echo "MANPATH="/opt/exp_software/neutrino/ROOT/v6.20.00_py3/man:$MANPATH:"" >> "$SCRIPT_FOLDER/fast_resp.sh"
+echo "python3 $SCRIPT_PATH/fast_resp.py $CONFIG $INPUT $OUTPUT_FOLDER/response_cut.drdf -e ${MAX_EVN_NUM} > $LOGS_FOLDER/fast_resp.out 2> $LOGS_FOLDER/fast_resp.err" >> "$SCRIPT_FOLDER/fast_resp.sh"
 
 # Create the job .sub file
-touch "$SCRIPT_FOLDER/fastCalo.sub"
-> "$SCRIPT_FOLDER/fastCalo.sub"
-echo "environment             = \"PYTHONPATH=/opt/exp_software/neutrino/PYTHON3_PACKAGES\"" >> "$SCRIPT_FOLDER/fastCalo.sub"
+touch "$SCRIPT_FOLDER/fast_resp.sub"
+> "$SCRIPT_FOLDER/fast_resp.sub"
+echo "environment             = \"PYTHONPATH=/opt/exp_software/neutrino/PYTHON3_PACKAGES\"" >> "$SCRIPT_FOLDER/fast_resp.sub"
 # echo "transfer_input_files    =  " >> "$SCRIPT_FOLDER/.sub"
-echo "request_cpus = 1" >> "$SCRIPT_FOLDER/fastCalo.sub"
-echo "request_memory = 8192" >> "$SCRIPT_FOLDER/fastCalo.sub"
-echo "executable              = "$SCRIPT_FOLDER/fastCalo.sh"" >> "$SCRIPT_FOLDER/fastCalo.sub"
-#echo "transfer_input_files    = "$EXECUTABLE"" >> "$SCRIPT_FOLDER/fastCalo.sub"
-echo "log                     = "$LOGS_FOLDER/fastCalo.log"" >> "$SCRIPT_FOLDER/fastCalo.sub"
-#echo "output                  = "$SCRIPT_FOLDER/response_cut.drdf"" >> "$SCRIPT_FOLDER/fastCalo.sub"
-echo "error                   = "$LOGS_FOLDER/fastCalo.err"" >> "$SCRIPT_FOLDER/fastCalo.sub"
+echo "request_cpus = 1" >> "$SCRIPT_FOLDER/fast_resp.sub"
+echo "request_memory = 8192" >> "$SCRIPT_FOLDER/fast_resp.sub"
+echo "executable              = "$SCRIPT_FOLDER/fast_resp.sh"" >> "$SCRIPT_FOLDER/fast_resp.sub"
+#echo "transfer_input_files    = "$EXECUTABLE"" >> "$SCRIPT_FOLDER/fast_resp.sub"
+echo "log                     = "$LOGS_FOLDER/fast_resp.log"" >> "$SCRIPT_FOLDER/fast_resp.sub"
+#echo "output                  = "$SCRIPT_FOLDER/response_cut.drdf"" >> "$SCRIPT_FOLDER/fast_resp.sub"
+echo "error                   = "$LOGS_FOLDER/fast_resp.err"" >> "$SCRIPT_FOLDER/fast_resp.sub"
 # echo "should_transfer_files   = Yes" >> "$SCRIPT_FOLDER/.sub"
 # echo "when_to_transfer_output = ON_EXIT" >> "$SCRIPT_FOLDER/.sub"
-echo "queue" >> "$SCRIPT_FOLDER/fastCalo.sub"
+echo "queue" >> "$SCRIPT_FOLDER/fast_resp.sub"
 
 
-> $LOGS_FOLDER/fastCalo.out
-> $LOGS_FOLDER/fastCalo.err
+> $LOGS_FOLDER/fast_resp.out
+> $LOGS_FOLDER/fast_resp.err
 > $LOGS_FOLDER/time.log
 check_errors
 
@@ -154,7 +154,7 @@ for ((j=0;j<${REP_NUM};j++)); do
   fi 
   JOB_NUM=${j}
   echo "Submitting job ${JOB_NUM} on HTC"
-  condor_submit -name sn-02.cr.cnaf.infn.it -spool "$SCRIPT_FOLDER/fastCalo.sub" > $LOGS_FOLDER/tmp_log
+  condor_submit -name sn-02.cr.cnaf.infn.it -spool "$SCRIPT_FOLDER/fast_resp.sub" > $LOGS_FOLDER/tmp_log
   check_errors
   JOB_ID=$(awk -F "cluster " '{if($2 != "")print $2;if($2 != "") exit;}' "$LOGS_FOLDER/tmp_log")
   JOB_ID=$(echo $JOB_ID | sed "s/\.//g")
@@ -163,10 +163,10 @@ for ((j=0;j<${REP_NUM};j++)); do
   echo $JOB_ID
   check_condor $JOB_ID 1
   echo "Job ${JOB_NUM} completed"
-  JOB_TIME=$(tail -n 1 $LOGS_FOLDER/fastCalo.out)
+  JOB_TIME=$(tail -n 1 $LOGS_FOLDER/fast_resp.out)
   #JOBNUMBER=$(head -n 2 $LOGS_FOLDER/tmp_log | tail -1)
   echo "Time for job ${JOB_NUM} : ${JOB_TIME}" >> $LOGS_FOLDER/time.log
-  #cut -d "---" <<< $LOGS_FOLDER/fastCalo.out > $OUTPUT_FOLDER/exe_time.txt
-  #grep -n 'number_of_ph=' $LOGS_FOLDER/fastCalo.out > $OUTPUT_FOLDER/exe_time.txt
+  #cut -d "---" <<< $LOGS_FOLDER/fast_resp.out > $OUTPUT_FOLDER/exe_time.txt
+  #grep -n 'number_of_ph=' $LOGS_FOLDER/fast_resp.out > $OUTPUT_FOLDER/exe_time.txt
   
 done
