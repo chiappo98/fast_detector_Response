@@ -57,7 +57,7 @@ Installing this repository the user will get automaticly the `drdf.py` file. For
 
 
 ## Fast_resp installation
-Login on the neutrino-01 machine. From a local terminal:
+Connect first to bastion.cnaf.infn.it, the CNAF gateway, and then login on the neutrino-01 machine. From a local terminal:
 ```
 ssh <HTC_user>@bastion.cnaf.infn.it
 ssh <HTC_user>@131.154.161.32
