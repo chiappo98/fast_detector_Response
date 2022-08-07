@@ -51,7 +51,7 @@ The neutrino-01 machine adopts the HTCondor batch system (more on this in sectio
 
 ## Required softwares
 The only software which is not available publicly is the drdf package, necessary to build the output files. 
-Installing this repository the user will get automaticly the `drdf.py` file. For the ones who have an account on *baltig* the same software is available [here](https://baltig.infn.it/dune/sand-optical/drdf).
+Installing this repository the user will get automaticly the `drdf.py` file. For the ones who have access to GIT repositories at *baltig.infn.it* (you need to be registered as guest at INFN - Sezione di Bologna), the same software is available [here](https://baltig.infn.it/dune/sand-optical/drdf).
 
 ### The drdf module
 
@@ -96,7 +96,7 @@ As already stressed, if the user's intent is run the response on his local devic
 ### Submission on Virtual Machine
 Together with the fast response, in this repository the user can find also the `launch_resp.sh` bash script. It provides a fast and easy way to submit the job on the VM and retrive information on its status, creating also new folders to store the response output.
 
-Once logged on neutrino-01 you can launch the detector response through the bash script with the following command
+Once logged on neutrino-01 (same procedure applied in [Fast_resp installation](#fast_resp-installation)) you can launch the detector response through the bash script with the following command
 ```
 bash launch_resp.sh -i <INPUT_file_PATH> -f <OUTPUT_folder_PATH> -d <OUTPUT_folder_NAME> -e <MAX_event_NUMBER> -n <NUMBER_of_REPETITIONS>
 ```
@@ -117,7 +117,7 @@ The output structure is as follows:
     ├─ fast_resp.sh              # fast_resp submission file
     │   
     ├─ logs  
-    │   ├─ tmp_log               # ??????????????????????
+    │   ├─ tmp_log               # log of submitted jobs
     │   ├─ time.log              # contains the timing of the submitted jobs
     │   ├─ fast_resp.log         # log of response conversion
     │   ├─ fast_resp.err         # err of response conversion
@@ -128,7 +128,24 @@ The output structure is as follows:
 ```
 
 ### HTCondor
+The CNAF Tier-1 infrastructure provides a submit node for submission from local UI: [sn-02.cr.cnaf.infn.it](http://sn-02.cr.cnaf.infn.it/)
+------------------------->>>>>>>>>>>>>>>>>check
 
+For HTCondor to run a job, it must be given details such as the names and location of the executable and all needed input files. These details are specified in the submit description file, in this case `fast_resp.sh`. 
+
+To submit the job, we need also to specify all the details such as the names and location of the executable and all needed input files creating a submit description file `fast_resp.sub`.
+
+To submit jobs locally, i.e. from CNAF UI, use the following command:
+```
+condor_submit -name sn-02.cr.cnaf.infn.it -spool <path_to_fast_resp.sub>
+```
+whereas, to see information about a single job use
+```
+condor_q -nobatch -af JobStatus -name sn-02.cr.cnaf.infn.it $JOB_ID
+```
+All this sequence of job submission and monitor is embedded inside *launch_resp.sh*.
+
+For more information look at [HTC - Job Submission](https://confluence.infn.it/display/TD/9+-+Job+submission).
 
 ### Submission on Personal Computer
 In order to be able to submit this code on your PC, the following requirements are essential:
@@ -137,11 +154,3 @@ In order to be able to submit this code on your PC, the following requirements a
 - PyROOT module 
 - drdf module (go to the dedicated Section)
 - a *sensor.root* input file (an example set is already provided)
-
-
-
-### Submission on HTCondor through bash script
-An easier and more useful way to submit the detector response is using the bash script *launch_resp.sh*, which creates automatically the folders and allows t
-
-
-
