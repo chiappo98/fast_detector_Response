@@ -110,6 +110,8 @@ There is also the possibility to run the simulation in backgroud, using the comm
 ```
 nohup bash launch_resp.sh -i <INPUT_file_PATH> -f <OUTPUT_folder_PATH> -d <OUTPUT_folder_NAME> -e <MAX_event_NUMBER> -n <NUMBER_of_REPETITIONS> > out.log &
 ```
+To check how the job proceeds just look inside the *out.log* file.
+
 The output structure is as follows:
 ```bash
 - outputFolder                   # root folder of the output files
@@ -128,13 +130,11 @@ The output structure is as follows:
 ```
 
 ### HTCondor
-The CNAF Tier-1 infrastructure provides a submit node for submission from local UI: [sn-02.cr.cnaf.infn.it](http://sn-02.cr.cnaf.infn.it/)
-------------------------->>>>>>>>>>>>>>>>>check
-
 For HTCondor to run a job, it must be given details such as the names and location of the executable and all needed input files. These details are specified in the submit description file, in this case `fast_resp.sh`. 
 
 To submit the job, we need also to specify all the details such as the names and location of the executable and all needed input files creating a submit description file `fast_resp.sub`.
 
+The CNAF Tier-1 infrastructure provides a submit node for submission from local UI: *sn-02.cr.cnaf.infn.it*.
 To submit jobs locally, i.e. from CNAF UI, use the following command:
 ```
 condor_submit -name sn-02.cr.cnaf.infn.it -spool <path_to_fast_resp.sub>
