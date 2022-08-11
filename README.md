@@ -1,12 +1,23 @@
-# fast_detector_Response
+# Table of contents
+- [Fast detector response](#fast-detector-response)
+- [The physics case](#the-physics-case)
+- [Running the script](#running-the-script)
+  - [Account request](#account-request)
+  - [Required softwares](#required-softwares)
+    - [The drdf module](#the-drdf-module)
+  - [Fast_resp installation](#fast_resp-installation)
+  - [Launching a production](#launching-a-production)
+    - [Submission on Virtual Machine](#submission-on-virtual-machine)
+    - [HTCondor](#htcondor)
 
-The aim of this program is to simulate the Readout system of the GRAIN (GRanular Argon fot Interctions of Neutrinos) module, part of the SAND (System for on-Axis Neutrino Detection) detector of the DUNE experiment, a long-baseline experiment for the detection of artificial and cosmic neutrinos.
-GRAIN is a vessel containing ~1 ton of liquid Argon (LAr) in which neutrinos can interact. The charged particles generated in these interactions move inside the LAr emmitting scintillation light, which is detected by SiPMs placed on the walls of the vessel.
 
-The SiPMs are arranged in 76 cameras, which consist in 32x32 matrices.
-The fast_resp.py simulate the detection of scintillation photons giving as output the number of photons arrived at each sensor, in a drdf format (more on this later).
+# Fast detector response
 
-## The physics case
+The aim of this program is to simulate the Readout system of a detector composed by Silicon Photomultiplier (SiPM) sensors. They are arranged in 76 matrices (called cameras) of 32x32 sensors each, covering the internal walls of a vessel containing a scintillating material. Their scope is to detect the scintillation light produced by a charged particle moving inside the scintillating material. Using this program you can perform a calorimetric measurement, obtaining the energy of the incoming particle.
+
+The program gives as output the distribution of photons on each camera, in a drdf file, which is a custom image format (more on this later).
+
+# The physics case
 The DUNE experiment is a long-baseline neutrino experiment which is under construction in the US between the Fermilab, where the neutrino beam will be generated, and hte Stanford Underground Research Facility in South Dakota.
 The experiment will study neutrino oscillations trying to measure the $\delta_{cp}$ phase of the PMNS matrix and the neutrino mass ordering. It will also be able to detect cosmic neutrinos, providing important information about cosmic ray sources, useful for multimessenger astrophysics.
 
@@ -14,23 +25,128 @@ DUNE is composed by a Near Detector (ND) and a Far Detector (FD), consisting of 
 
 SAND in turn has three modules enclosed in a superconducting magnet: a Straw Tube Tracker, an electromagnetic calorimeter and GRAIN.
 
-## fast_resp.py - how it works
-This python program has 5 options and takes as input 3 parameters.
+The GRAIN (GRanular Argon fot Interctions of Neutrinos) module, part of the SAND (System for on-Axis Neutrino Detection) detector of the DUNE experiment, a long-baseline experiment for the detection of artificial and cosmic neutrinos.
+GRAIN is a vessel containing ~1 ton of liquid Argon (LAr) in which neutrinos can interact. The charged particles generated in these interactions move inside the LAr emmitting scintillation light, which is detected by SiPMs placed on the walls of the vessel. As already explained, the SiPMs are arranged in 76 cameras, which consist in 32x32 matrices.
+
+# Running the script
+It is possile to run the script both on a local device or on a Virtual Machine. 
+If your intent is the submission on a local machine you can skip the following sections, going directly to [Launching a production](#launching-a-production).
+
+However, to simulate a large number of events it is much more conveninet to rely on a virtual machine, which allows a faster execution time exploiting the possibility of running multiple events at the same time.
+
+In order to be able to run the simulation of the detector response, few steps are required:
+- Own an account to be submit job on the Virtual Machine
+- Have Pyhton3 installed on the VM together with the PyROOT module
+- install the *drdf* package on the VM
+- Install the script on the VM
+
+## Account request
+In order submit the detector response on a Virtul Machine, an account is needed. Working on the detector response I access via ssh the Tier-1 user interfaces (UI) connecting to *bastion.cnaf.infn.it*, the CNAF gateway, using in particular the experiment dedicated UI called *neutrino-01*, which is devoted to the DUNE collaboration, to which I belong to.
+
+[Here](https://confluence.infn.it/pages/viewpage.action?pageId=40665299) you can find more information on the INFN-CNAF Tier-1.
+
+In the following sections hence I will refer to this particular VM, but the user is free to adapt the programs, and in particular the bash script *launch_resp.sh*, to the VM they have access to.
+
+The neutrino-01 machine adopts the HTCondor batch system (more on this in section [HTCondor](#htcondor)).
+
+## Required softwares
+The only software which is not available publicly is the drdf package, necessary to build the output files. 
+Installing this repository the user will get automaticly the `drdf.py` file. For the ones who have access to GIT repositories at *baltig.infn.it* (you need to be registered as guest at INFN - Sezione di Bologna), the same software is available [here](https://baltig.infn.it/dune/sand-optical/drdf).
+
+### The drdf module
+
+
+## Fast_resp installation
+Connect first to bastion.cnaf.infn.it, the CNAF gateway, and then login on the neutrino-01 machine. From a local terminal:
+```
+ssh <HTC_user>@bastion.cnaf.infn.it
+ssh <HTC_user>@131.154.161.32
+```
+this should put you in the folder
+```
+/home/NEUTRINO/<HTC_user>
+```
+
+from here, clone this repository in the preferred location
+```
+git@github.com:chiappo98/fast_detector_Response.git  
+```
+--------------------->>>>>>>>>>>to verify
+
+Before submitting a production pay attention to have installed python3, togheter with all the modules imported in `fast_resp.py`.
+
+## Launching a production
+*fast_resp.py* takes in input 3 parameters and has 3 additional options.
 The submission comand therefore is
-
-`python3 fast_resp.py <config_file> <input_ROOT_file> <output_drdf_file> -nc
--e <event_number> -i <idrun>`
-
+```
+python3 fast_resp.py <config_file> <input_ROOT_file> <output_drdf_file> -nc -e <event_number> -i <idrun>
+```
 where 
-- **config_file**: contains some parameters for the DAQ simulation, such as the PDE and cross-talk probability for the SiPM sensors, togheter with their physical dimensions. The file name is *config.xml*.
-- **input_ROOT_file**: is a file named *sensors.root*, which contains all the information about the photons propagating from the charged particles trajetories towards the sensors surface. In particular it provides the energy, arrival time and inpact coordinates of each photon.
-- **output_drdf_file**: is usually a file named *response.drdf*. It is an image file in a custom-made format. The single response.drdf file contains the 2D plot of all the sensor matrices with the number of photons detected on each SiPM and the arrival time of the first one of them.
-- **-nc** option: this options allows the user to retrive the total number of photons arrived on each SiPM without considering, for example, PDE or cross-talk.
-- **-e** option: allows the user to specify the maximum number of event to be computed, if different from the number overall one.
-- **-i** option: 
+- `config_file`: contains some parameters for the DAQ simulation, such as the PDE and cross-talk probability for the SiPM sensors, togheter with their physical dimensions. The file name is *config.xml*.
+- `input_ROOT_file`: is a file named *sensors.root*, which contains all the information about the photons propagating from the charged particles trajetories towards the sensors surface. In particular it provides the energy, arrival time and inpact coordinates of each photon.
+- `output_drdf_file`: is usually a file named *response.drdf*. It is an image file in a custom-made format. The single response.drdf file contains the 2D plot of all the sensor matrices with the number of photons detected on each SiPM and the arrival time of the first one of them.
+- `-nc` option: this options allows the user to retrive the total number of photons arrived on each SiPM without considering, for example, PDE or cross-talk.
+- `-e` option: allows the user to specify the maximum number of event to be computed, if different from the number overall one.
+- `-i` option: run identifier (UUID)
 
 The input file obtained through the processing of a GEANT4 simulation of a neutrino interaction inside liquid Argon with other programs, which leads to the sensors.root file. Since they are not the result of my work I won't upload here the whole simulation chain scripts.
-  
+
+As already stressed, if the user's intent is run the response on his local device, the procedure described above its enough. If instead he wants to use a Virtual Machine the following section could be useful.
+
+### Submission on Virtual Machine
+Together with the fast response, in this repository the user can find also the `launch_resp.sh` bash script. It provides a fast and easy way to submit the job on the VM and retrive information on its status, creating also new folders to store the response output.
+
+Once logged on neutrino-01 (same procedure applied in [Fast_resp installation](#fast_resp-installation)) you can launch the detector response through the bash script with the following command
+```
+bash launch_resp.sh -i <INPUT_file_PATH> -f <OUTPUT_folder_PATH> -d <OUTPUT_folder_NAME> -e <MAX_event_NUMBER> -n <NUMBER_of_REPETITIONS>
+```
+where
+- `-e` is the same option given in the fast_resp.py, which allows to select the maximum number of events to be analysed.
+- `-n` gives the possibility to analyse the same set of events *n*-times.
+
+Notice that when specifying the *output_folder_path* you don't have to insert the name of the output folder, which is instead to be specified in the following argument.
+
+There is also the possibility to run the simulation in backgroud, using the commad
+```
+nohup bash launch_resp.sh -i <INPUT_file_PATH> -f <OUTPUT_folder_PATH> -d <OUTPUT_folder_NAME> -e <MAX_event_NUMBER> -n <NUMBER_of_REPETITIONS> > out.log &
+```
+To check how the job proceeds just look inside the *out.log* file.
+
+The output structure is as follows:
+```bash
+- outputFolder                   # root folder of the output files
+    ├─ fast_resp.sub             # fast_resp submission file
+    ├─ fast_resp.sh              # fast_resp submission file
+    │   
+    ├─ logs  
+    │   ├─ tmp_log               # log of submitted jobs
+    │   ├─ time.log              # contains the timing of the submitted jobs
+    │   ├─ fast_resp.log         # log of response conversion
+    │   ├─ fast_resp.err         # err of response conversion
+    │   └─ fast_resp.out         # out of response conversion
+    │   
+    └─ output
+        └─ response.drdf         # pixel signal output in drdf format 
+```
+
+### HTCondor
+For HTCondor to run a job, it must be given details such as the names and location of the executable and all needed input files. These details are specified in the submit description file, in this case `fast_resp.sh`. 
+
+To submit the job, we need also to specify all the details such as the names and location of the executable and all needed input files creating a submit description file `fast_resp.sub`.
+
+The CNAF Tier-1 infrastructure provides a submit node for submission from local UI: *sn-02.cr.cnaf.infn.it*.
+To submit jobs locally, i.e. from CNAF UI, use the following command:
+```
+condor_submit -name sn-02.cr.cnaf.infn.it -spool <path_to_fast_resp.sub>
+```
+whereas, to see information about a single job use
+```
+condor_q -nobatch -af JobStatus -name sn-02.cr.cnaf.infn.it $JOB_ID
+```
+All this sequence of job submission and monitor is embedded inside *launch_resp.sh*.
+
+For more information look at [HTC - Job Submission](https://confluence.infn.it/display/TD/9+-+Job+submission).
+
 ### Submission on Personal Computer
 In order to be able to submit this code on your PC, the following requirements are essential:
 - Linux or WSL 
@@ -38,13 +154,3 @@ In order to be able to submit this code on your PC, the following requirements a
 - PyROOT module 
 - drdf module (go to the dedicated Section)
 - a *sensor.root* input file (an example set is already provided)
-
-
-  
-### Submission on Virtual Machine
-
-### Submission on HTCondor through bash script
-An easier and more useful way to submit the detector response is using the bash script *launch_resp.sh*, which creates automatically the folders and allows t
-
-## The drdf module
-
