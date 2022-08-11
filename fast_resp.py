@@ -52,8 +52,8 @@ def assign_channel(photons, geom):          #arguments: sensor_data, CONFIG
     y_thres = np.where((yedge >= geom['celledge']) & (yedge<=(geom['cellsize']+geom['celledge'])))
     cut2 = np.intersect1d(cut1,y_thres)
     
-    cell_x = np.floor_divide(photons[:,2][cut2],(geom['cellsize'] + 2 * geom['celledge']) + (shape[0] / 2))
-    cell_y = np.floor_divide(photons[:,3][cut2],(geom['cellsize'] + 2 * geom['celledge']) + (shape[1] / 2))
+    cell_x = np.floor_divide(photons[:,2][cut2],(geom['cellsize'] + 2 * geom['celledge'])) + (shape[0] / 2)
+    cell_y = np.floor_divide(photons[:,3][cut2],(geom['cellsize'] + 2 * geom['celledge'])) + (shape[1] / 2)
     time = photons[:,1][cut2]
     ch = cell_y * shape[0] + cell_x         #each channel identified by a SINGLE NUMBER from 0 to 1023
     return time, ch

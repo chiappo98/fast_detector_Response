@@ -153,6 +153,8 @@ for ((j=0;j<${REP_NUM};j++)); do
   fi 
   JOB_NUM=${j}
   echo "Submitting job ${JOB_NUM} on HTC"
+  ssh -T chiappon@bastion.cnaf.infn.it                                                                 #----------->>>>>>>>>>> MODIFY to insert the user one
+  ssh -T chiappon@131.154.161.32                                                                             #----------->>>>>>>>>>>
   condor_submit -name sn-02.cr.cnaf.infn.it -spool "$SCRIPT_FOLDER/fastCalo.sub" > $LOGS_FOLDER/tmp_log
   check_errors
   JOB_ID=$(awk -F "cluster " '{if($2 != "")print $2;if($2 != "") exit;}' "$LOGS_FOLDER/tmp_log")
@@ -166,6 +168,6 @@ for ((j=0;j<${REP_NUM};j++)); do
   #JOBNUMBER=$(head -n 2 $LOGS_FOLDER/tmp_log | tail -1)
   echo "Time for job ${JOB_NUM} : ${JOB_TIME}" >> $LOGS_FOLDER/time.log
   #cut -d "---" <<< $LOGS_FOLDER/fastCalo.out.live > $OUTPUT_FOLDER/exe_time.txt
-  #grep -n 'number_of_ph=' $LOGS_FOLDER/fastCalo.out.live > $OUTPUT_FOLDER/exe_time.txt
+  #grep -n 'number_of_ph=' $LOGS_FOLDER/fastCalo.out.live > $OUTPUT_FOLDER/exe_time.txt                                                                                                   #----------->>>>>>>>>>>
   
 done
