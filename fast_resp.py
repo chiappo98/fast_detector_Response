@@ -1,7 +1,8 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import os
 import tempfile
 os.environ["MPLCONFIGDIR"] = tempfile.gettempdir()
-from matplotlib import pyplot as plt
 from scipy.stats import norm 
 import numpy as np
 import ROOT
@@ -44,21 +45,28 @@ def assign_channel(photons, geom):          #arguments: sensor_data, CONFIG
     xside = shape[0] * (geom['cellsize'] + 2 * geom['celledge'])/ 2         #find coordinates of matrix edge 
     yside = shape[1] * (geom['cellsize'] + 2 * geom['celledge'])/ 2         #wrt the centre of the sensor
     
-    z_thres = np.where(photons[:,4]== geom['zplane'])
-    xedge = np.remainder(photons[:,2][z_thres],(geom['cellsize'] + geom['celledge']))        
-    x_thres = np.where((xedge >= geom['celledge']) & (xedge<=(geom['cellsize']+geom['celledge'])))
-    cut1 = np.intersect1d(z_thres,x_thres)                                                      
-    yedge = np.remainder(photons[:,3][cut1],(geom['cellsize'] + geom['celledge']))           
-    y_thres = np.where((yedge >= geom['celledge']) & (yedge<=(geom['cellsize']+geom['celledge'])))
-    cut2 = np.intersect1d(cut1,y_thres)
+    z_thres = np.where(np.isclose(photons[:,4], geom['zplane']))
+    active_areaX = np.where((np.abs(photons[:,2][z_thres])>=0) & (np.abs(photons[:,2][z_thres]) <= xside))
+    cut1 = np.intersect1d(z_thres,active_areaX)
     
-    cell_x = np.floor_divide(photons[:,2][cut2],(geom['cellsize'] + 2 * geom['celledge'])) + (shape[0] / 2)
-    cell_y = np.floor_divide(photons[:,3][cut2],(geom['cellsize'] + 2 * geom['celledge'])) + (shape[1] / 2)
-    time = photons[:,1][cut2]
+    xedge = np.remainder(np.abs(photons[:,2][cut1]),(geom['cellsize'] + geom['celledge']))        
+    x_thres = np.where((xedge >= geom['celledge']) & (xedge<=(geom['cellsize']+geom['celledge'])))
+    cut2 = np.intersect1d(cut1,x_thres) 
+    
+    active_areaY = np.where((np.abs(photons[:,3][cut2])>=0) & (np.abs(photons[:,3][cut2]) <= yside))   
+    cut3 = np.intersect1d(cut2,active_areaY)    
+                                                  
+    yedge = np.remainder(np.abs(photons[:,3][cut3]),(geom['cellsize'] + geom['celledge']))           
+    y_thres = np.where((yedge >= geom['celledge']) & (yedge<=(geom['cellsize']+geom['celledge'])))
+    cut4 = np.intersect1d(cut3,y_thres)
+    
+    cell_x = np.floor_divide(photons[:,2][cut4],(geom['cellsize'] + 2 * geom['celledge'])) + (shape[0] / 2)
+    cell_y = np.floor_divide(-photons[:,3][cut4],(geom['cellsize'] + 2 * geom['celledge'])) + (shape[1] / 2)
+    time = photons[:,1][cut4]
     ch = cell_y * shape[0] + cell_x         #each channel identified by a SINGLE NUMBER from 0 to 1023
     return time, ch
 
-def count_photons(time, ch, config ):                                            #argument: ph. channel, energy, time 
+def count_photons(time, ch, config ):                                            #argument: time, photons (a single array)
     """considering pde only for sipm response, for debugging/fast execution"""
     phlist = []
     for c in range(1024):
@@ -114,33 +122,37 @@ def main_evn(inFile,klist,evn,drdffile):
          drdffile.start_event(idEvent)
          #t0 = time.perf_counter()
          #print("processing event n. ", idEvent)
-         #tot_ph = np.empty(0)
+         tot_ph = np.empty(0)
          for key in klist:                           #loop over cameras (the keys of the list)
              if key.GetName() != 'commit_hash':
-                 #t0 = time.perf_counter()
+                 #t1 = time.perf_counter()
                  sensor_data, sensor_name= load_sensor_data(inFile, key, evn)
+                 #t2 = time.perf_counter()
+                 #print("load_sensor_data={0}".format(t2-t1))
                  t_arr, sensor_data = assign_channel(sensor_data, CONFIG)           #output energy+time
-                 #t0 = time.perf_counter()
+                 #t3 = time.perf_counter()
+                 #print("assign_channel={0}".format(t3-t2))
                  if (args.nocut):
                      detected_ph_time = count_photons_no_cut(t_arr, sensor_data, CONFIG)  
-                     #t0 = time.perf_counter()
-                     #n_ph = ph_num(detected_ph_time)
-                     #tot_ph = np.append(tot_ph,n_ph)
+                     #t4 = time.perf_counter()
+                     #print("cont_photons={0}".format(t4-t3))
+                     n_ph = ph_num(detected_ph_time)
+                     tot_ph = np.append(tot_ph,n_ph)
                      imgshape = CONFIG['matrix']
                      img = np.asarray(detected_ph_time).reshape(imgshape[0], imgshape[1], 2).astype('float32')   #reshape the list of ph 
                      image = drdf.Image(img)
                      drdffile.add_image(sensor_name, image)
                  else: 
                      detected_ph_time = count_photons(t_arr, sensor_data, CONFIG)       #list of : nph + timeof first arrival
-                     #t0 = time.perf_counter()
-                     #n_ph = ph_num(detected_ph_time)
-                     #tot_ph = np.append(tot_ph,n_ph)
+                     #t4 = time.perf_counter()
+                     n_ph = ph_num(detected_ph_time)
+                     tot_ph = np.append(tot_ph,n_ph)
                      imgshape = CONFIG['matrix']
                      img = np.asarray(detected_ph_time).reshape(imgshape[0], imgshape[1], 2).astype('float32')   #reshape the list of ph 
                      image = drdf.Image(img)
                      drdffile.add_image(sensor_name, image)
          #print("execution time for event {1}: {0:.5f} s".format(t0 - tevent_start , evn))
-         #print("number of ph=",np.sum(tot_ph))
+         print("number of ph=",np.sum(tot_ph))
          return drdffile        
     
 if __name__ == '__main__':
@@ -162,7 +174,7 @@ if __name__ == '__main__':
     
     CONFIG = import_configuration(configfile)               #geometrical configuration
     drdffile = drdf.DRDF()
-    if args.idrun:              #??
+    if args.idrun:              
         try: 
             runid = uuid.UUID(args.idrun)
         except ValueError:
