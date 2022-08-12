@@ -76,17 +76,18 @@ git@github.com:chiappo98/fast_detector_Response.git
 Before submitting a production pay attention to have installed python3, togheter with all the modules imported in `fast_resp.py`.
 
 ## Launching a production
-*fast_resp.py* takes in input 3 parameters and has 3 additional options.
+*fast_resp.py* takes in input 3 parameters and has 4 additional options.
 The submission comand therefore is
 ```
-python3 fast_resp.py <config_file> <input_ROOT_file> <output_drdf_file> -nc -e <event_number> -i <idrun>
+python3 fast_resp.py <config_file> <input_ROOT_file> <output_drdf_file> -nc -e <event_number> -s <start_event> -i <idrun>
 ```
 where 
 - `config_file`: contains some parameters for the DAQ simulation, such as the PDE and cross-talk probability for the SiPM sensors, togheter with their physical dimensions. The file name is *config.xml*.
 - `input_ROOT_file`: is a file named *sensors.root*, which contains all the information about the photons propagating from the charged particles trajetories towards the sensors surface. In particular it provides the energy, arrival time and inpact coordinates of each photon.
 - `output_drdf_file`: is usually a file named *response.drdf*. It is an image file in a custom-made format. The single response.drdf file contains the 2D plot of all the sensor matrices with the number of photons detected on each SiPM and the arrival time of the first one of them.
 - `-nc` option: this options allows the user to retrive the total number of photons arrived on each SiPM without considering, for example, PDE or cross-talk.
-- `-e` option: allows the user to specify the maximum number of event to be computed, if different from the number overall one.
+- `-e` option: allows the user to specify the number of event to be computed, if different from the total one.
+- `-s` option: allows the user to specify the starting event, if different from 0. To be used *only* if the number of event is *smaller* than the total one.
 - `-i` option: run identifier (UUID)
 
 The input file obtained through the processing of a GEANT4 simulation of a neutrino interaction inside liquid Argon with other programs, which leads to the sensors.root file. Since they are not the result of my work I won't upload here the whole simulation chain scripts.
@@ -94,37 +95,53 @@ The input file obtained through the processing of a GEANT4 simulation of a neutr
 As already stressed, if the user's intent is run the response on his local device, the procedure described above its enough. If instead he wants to use a Virtual Machine the following section could be useful.
 
 ### Submission on Virtual Machine
-Together with the fast response, in this repository the user can find also the `launch_resp.sh` bash script. It provides a fast and easy way to submit the job on the VM and retrive information on its status, creating also new folders to store the response output.
+In order to submit the fast response on a VM `splitted_fast_resp.py` and `launch_splitted_response.sh` are provided to the user. They represent a fast and easy way to submit the job on the VM and retrive information on its status, creating also new folders to store the response output.
 
 Once logged on neutrino-01 (same procedure applied in [Fast_resp installation](#fast_resp-installation)) you can launch the detector response through the bash script with the following command
 ```
-bash launch_resp.sh -i <INPUT_file_PATH> -f <OUTPUT_folder_PATH> -d <OUTPUT_folder_NAME> -e <MAX_event_NUMBER> -n <NUMBER_of_REPETITIONS>
+bash launch_splitted_response.sh -i <INPUT_file_PATH> -f <OUTPUT_folder_PATH> -d <OUTPUT_folder_NAME> -e <MAX_event_NUMBER> -s <JOB_SIZE> -x <STARTING_EVENT>
 ```
 where
-- `-e` is the same option given in the fast_resp.py, which allows to select the maximum number of events to be analysed.
-- `-n` gives the possibility to analyse the same set of events *n*-times.
+- `-e` is the same option given in the fast_resp.py, to specify the maximum number of events to be analysed.
+- `-s` determines the size of the job, *i.e.* the number of events processed in each job.
+- `-x` gives the possibility to specify the starting event, if the number of events given is *less* than the total one.
 
 Notice that when specifying the *output_folder_path* you don't have to insert the name of the output folder, which is instead to be specified in the following argument.
 
 There is also the possibility to run the simulation in backgroud, using the commad
 ```
-nohup bash launch_resp.sh -i <INPUT_file_PATH> -f <OUTPUT_folder_PATH> -d <OUTPUT_folder_NAME> -e <MAX_event_NUMBER> -n <NUMBER_of_REPETITIONS> > out.log &
+nohup bash launch_resp.sh -i <INPUT_file_PATH> -f <OUTPUT_folder_PATH> -d <OUTPUT_folder_NAME> -e <MAX_event_NUMBER> -s <JOB_SIZE> -x <STARTING_EVENT> > out.log &
 ```
 To check how the job proceeds just look inside the *out.log* file.
 
 The output structure is as follows:
 ```bash
-- outputFolder                   # root folder of the output files
-    ├─ fast_resp.sub             # fast_resp submission file
-    ├─ fast_resp.sh              # fast_resp submission file
+- outputFolder                            # root folder of the output files
+    ├─ splitted_fast_resp.sub             # fast_resp submission file
+    ├─ splitted_fast_resp.sh              # fast_resp submission file
+    ├─ config.txt
     │   
-    ├─ logs  
-    │   ├─ tmp_log               # log of submitted jobs
-    │   ├─ time.log              # contains the timing of the submitted jobs
-    │   ├─ fast_resp.log         # log of response conversion
-    │   ├─ fast_resp.err         # err of response conversion
-    │   └─ fast_resp.out         # out of response conversion
-    │   
+    ├─ log  
+    │   ├─ tmp_log                        # log of submitted jobs
+    │   ├─ time.log                       # contains the timing of the submitted jobs
+    │   ├─ splitted_fast_resp.log         # log of response conversion
+    │   ├─ splitted_fast_resp.err         # err of response conversion
+    │   ├─ splitted_fast_resp.out         # out of response conversion
+    │   ├─ job_log
+    │   │   ├─
+    |   │   ├─
+    |   │   └─
+    |   └─ job_err
+    |       ├─
+    |       ├─
+    |       └─
+    │
+    ├─ many_configs
+    │   ├─
+    │   ├─
+    │   ├─
+    │   └─
+    │
     └─ output
         └─ response.drdf         # pixel signal output in drdf format 
 ```
