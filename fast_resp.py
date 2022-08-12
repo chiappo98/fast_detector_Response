@@ -165,7 +165,8 @@ if __name__ == '__main__':
     parser.add_argument('outfile', help = 'output .img file')
     parser.add_argument('-nc', '--nocut', action ='store_true', help = ' count total number of photons')
     parser.add_argument('-e', '--events', help = ' max number of events to be processed')
-    parser.add_argument('-i', '--idrun', help ='run identifier (UUID)')         #????
+    parser.add_argument('-s', '--start_event', help = ' starting event')
+    parser.add_argument('-i', '--idrun', help ='run identifier (UUID)')         
     args = parser.parse_args()
 
     configfile = args.configfile
@@ -190,12 +191,18 @@ if __name__ == '__main__':
         
     inFile = ROOT.TFile.Open(fname, "READ")         #file sensors.root
     klist = inFile.GetListOfKeys()
-    nEvents = inFile.Get(klist.Last().GetName()).GetEntries()      
+    nEvents = inFile.Get(klist.Last().GetName()).GetEntries()    
+    start_evn = 0
     if (args.events):                               
         if int(args.events) < nEvents:
             nEvents = int(args.events)
+    if (args.start_event):                               
+        if int(args.start_event) + int(args.events) < nEvents:
+            start_evn = int(args.start_event)   
+    else:
+        print("ERROR. Invalid start_event.")
 
-    for evn in range(nEvents):                      #loop over events
+    for evn in range(start_evn, start_evn + nEvents):                      #loop over events
         drdffile=main_evn(inFile,klist,evn,drdffile)
     drdffile.write(wfile) 
     
