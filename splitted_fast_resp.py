@@ -192,7 +192,10 @@ if __name__ == '__main__':
     klist = inFile.GetListOfKeys()
     nEvents = inFile.Get(klist.Last().GetName()).GetEntries()      
     start = jobSize*jobNumber + start_evn
-    stop = jobSize*(jobNumber+1) + start_evn       
+    stop = jobSize*(jobNumber+1) + start_evn   
+    if ((start > nEvents) or (stop > nEvents)): 
+        sys.exit("ERROR. Invalid Jobnumber or Start_event")
+
     for evn in range(start,stop):
         drdffile=main_evn(inFile,klist,evn,drdffile)
     drdffile.write(wfile) 

@@ -192,17 +192,18 @@ if __name__ == '__main__':
     inFile = ROOT.TFile.Open(fname, "READ")         #file sensors.root
     klist = inFile.GetListOfKeys()
     nEvents = inFile.Get(klist.Last().GetName()).GetEntries()    
-    start_evn = 0
+    start = 0
+    stop = nEvents
     if (args.events):                               
         if int(args.events) < nEvents:
-            nEvents = int(args.events)
-    if (args.start_event):                               
-        if int(args.start_event) + int(args.events) < nEvents:
-            start_evn = int(args.start_event)   
-    else:
-        print("ERROR. Invalid start_event.")
+            stop = int(args.events)
+            if (args.start_event):    
+                start = int(args.start_event)
+                stop = int(args.start_event) + int(args.events)
+                if ((start > nEvents) or (stop > nEvents)): 
+                    sys.exit("ERROR. Invalid Jobnumber or Start_event") 
 
-    for evn in range(start_evn, start_evn + nEvents):                      #loop over events
+    for evn in range(start, stop):                      #loop over events
         drdffile=main_evn(inFile,klist,evn,drdffile)
     drdffile.write(wfile) 
     
