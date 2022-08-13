@@ -95,7 +95,10 @@ The input file obtained through the processing of a GEANT4 simulation of a neutr
 As already stressed, if the user's intent is run the response on his local device, the procedure described above its enough. If instead he wants to use a Virtual Machine the following section could be useful.
 
 ### Submission on Virtual Machine
-In order to submit the fast response on a VM `splitted_fast_resp.py` and `launch_splitted_response.sh` are provided to the user. They represent a fast and easy way to submit the job on the VM and retrive information on its status, creating also new folders to store the response output.
+In order to submit the fast response on a VM, `splitted_fast_resp.py` and `launch_splitted_response.sh` are provided to the user. They represent a fast and easy way to submit the job on the VM and retrive information on its status, creating also new folders to store the response output.
+The power of HTCondor bash system (have I introduced it???????????????) is the possibility to submit jobs in parallel, so that one can run *n*-times the same program (process n times the same events) through *n* parallel jobs, or .....
+
+The usage of HTCondor on *neutrino-01* for the fast response allows to split the events we have to process into subsamples which can run simultaneously
 
 The fast response is coded inside *splitted_fast_resp.py*. This program works in a very similar way wrt *fast_resp.py*, except for the fact that it is optimised for parallel submission on HTCondor and that the input parameters are given through a *config.txt* file.
 
@@ -111,9 +114,7 @@ Starting from the configuration file, it has the following structure:
 <idrun>           #(True or False) run identifier (UUID)   ---> if True, read also line 7
 <idrun>           #idrun 
 ```
-The parameters are written in the config file by the bash script, without any space or any other sign.
-
-Since we want to 
+The parameters are written in the config file by the bash script, without any space or any other sign. *launch_splitted_response.sh* further copy and modifies the original *config.txt* into *#n* configuration files (named *config_n.txt*), necessary for the submission of *#n* parallel jobs on HTCondor.
 
 Once logged on neutrino-01 (same procedure applied in [Fast_resp installation](#fast_resp-installation)) you can launch the detector response through the bash script with the following command
 ```
