@@ -45,7 +45,7 @@ In order submit the detector response on a Virtul Machine, an account is needed.
 
 [Here](https://confluence.infn.it/pages/viewpage.action?pageId=40665299) you can find more information on the INFN-CNAF Tier-1.
 
-In the following sections hence I will refer to this particular VM, but the user is free to adapt the programs, and in particular the bash script *launch_resp.sh*, to the VM they have access to.
+In the following sections I will always refer to job submission on the *neutrino-01* VM. However, the user is free to adapt the programs, and in particular the bash script *launch_splitted_response.sh*, to the VM they have access to.
 
 The neutrino-01 machine adopts the HTCondor batch system (more on this in section [HTCondor](#htcondor)).
 
@@ -110,7 +110,7 @@ Notice that when specifying the *output_folder_path* you don't have to insert th
 
 There is also the possibility to run the simulation in backgroud, using the commad
 ```
-nohup bash launch_resp.sh -i <INPUT_file_PATH> -f <OUTPUT_folder_PATH> -d <OUTPUT_folder_NAME> -e <MAX_event_NUMBER> -s <JOB_SIZE> -x <STARTING_EVENT> > out.log &
+nohup bash launch_splitted_response.sh -i <INPUT_file_PATH> -f <OUTPUT_folder_PATH> -d <OUTPUT_folder_NAME> -e <MAX_event_NUMBER> -s <JOB_SIZE> -x <STARTING_EVENT> > out.log &
 ```
 To check how the job proceeds just look inside the *out.log* file.
 
@@ -124,26 +124,28 @@ The output structure is as follows:
     ├─ log  
     │   ├─ tmp_log                        # log of submitted jobs
     │   ├─ time.log                       # contains the timing of the submitted jobs
-    │   ├─ splitted_fast_resp.log         # log of response conversion
-    │   ├─ splitted_fast_resp.err         # err of response conversion
-    │   ├─ splitted_fast_resp.out         # out of response conversion
+    │   ├─ splitted_fast_resp.log         # log of fast response 
+    │   ├─ splitted_fast_resp.err         # err of fast response 
+    │   ├─ splitted_fast_resp.out         # out of fast response 
     │   ├─ job_log
-    │   │   ├─
-    |   │   ├─
-    |   │   └─
-    |   └─ job_err
-    |       ├─
-    |       ├─
-    |       └─
+    │   │   ├─ job_0.log          #log from submission of job 0
+    │   │   ├─ job_1.log          #log from submission of job 1
+    │   │   └─ ...
+    │   └─ job_err
+    │       ├─ job_0.err          #err from submission of job 0
+    │       ├─ job_1.err          #err from submission of job 1
+    │       └─ ...
     │
     ├─ many_configs
-    │   ├─
-    │   ├─
-    │   ├─
-    │   └─
+    │   ├─ config_0.txt           #configuration file for fast response of event 0
+    │   ├─ config_1.txt           #configuration file for fast response of event 1  
+    │   └─ ...
     │
     └─ output
-        └─ response.drdf         # pixel signal output in drdf format 
+        ├─ response.drdf          # pixel signal output in drdf format of all events
+        ├─ response_0.drdf        # pixel signal output in drdf format of event 0
+        ├─ response_1.drdf        # pixel signal output in drdf format of event 1
+        └─ ... 
 ```
 
 ### HTCondor
@@ -160,7 +162,7 @@ whereas, to see information about a single job use
 ```
 condor_q -nobatch -af JobStatus -name sn-02.cr.cnaf.infn.it $JOB_ID
 ```
-All this sequence of job submission and monitor is embedded inside *launch_resp.sh*.
+All this sequence of job submission and monitor is embedded inside *launch_splitted_response.sh*.
 
 For more information look at [HTC - Job Submission](https://confluence.infn.it/display/TD/9+-+Job+submission).
 
