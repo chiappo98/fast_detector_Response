@@ -28,4 +28,4 @@ for index in range(int(evn_num)):
           #print('Image from source', src, 'with size', image.pixels.shape)
           mergefile.add_image(src, image)
           
-mergefile.write(drdf_path+'/response_cut.drdf')  
+mergefile.write(drdf_path+'/response.drdf')  
