@@ -97,6 +97,24 @@ As already stressed, if the user's intent is run the response on his local devic
 ### Submission on Virtual Machine
 In order to submit the fast response on a VM `splitted_fast_resp.py` and `launch_splitted_response.sh` are provided to the user. They represent a fast and easy way to submit the job on the VM and retrive information on its status, creating also new folders to store the response output.
 
+The fast response is coded inside *splitted_fast_resp.py*. This program works in a very similar way wrt *fast_resp.py*, except for the fact that it is optimised for parallel submission on HTCondor and that the input parameters are given through a *config.txt* file.
+
+Starting from the configuration file, it has the following structure:
+```
+<configfile>      #configuration .xml file
+<fname>           #simulation output .root file
+<wfile>           #output .img file
+<nocut>           #count total number of photons  (True or False)
+<jobNumber>       #number of submitted job from bash script
+<jobSize>         #size of submitted job from bash script
+<start_evn>       #staring event (if not 0)
+<idrun>           #(True or False) run identifier (UUID)   ---> if True, read also line 7
+<idrun>           #idrun 
+```
+The parameters are written in the config file by the bash script, without any space or any other sign.
+
+Since we want to 
+
 Once logged on neutrino-01 (same procedure applied in [Fast_resp installation](#fast_resp-installation)) you can launch the detector response through the bash script with the following command
 ```
 bash launch_splitted_response.sh -i <INPUT_file_PATH> -f <OUTPUT_folder_PATH> -d <OUTPUT_folder_NAME> -e <MAX_event_NUMBER> -s <JOB_SIZE> -x <STARTING_EVENT>
