@@ -42,6 +42,11 @@ if [ -z "${START_EVN}" ]; then
     START_EVN=0
 fi
 
+if [[ $JOB_SIZE > $EVENT_NUMBER ]]; then
+  echo "Invalid JOB_SIZE! Stopping the script."
+  exit 2
+fi
+
 ##NEW_DIR=/mnt/c/Users/Pc/SCexam/productions/test1
 ##INPUT=/mnt/c/Users/Pc/SCexam/edeo200_203/intermediate/inter_0/sensors_0.root 
 ##SCRIPT_FOLDER=/mnt/c/Users/Pc/SCexam/fast_detector_Response/
