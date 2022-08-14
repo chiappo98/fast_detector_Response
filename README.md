@@ -60,6 +60,11 @@ Installing this repository the user will get automaticly the `drdf.py` file. For
 
 ### The drdf module
 
+*drdf* is a custom image format created by Nicolò Tosi (INFN - Section of Bologna) in order to store efficiently a high number of images, from multiple events. From a single event in fact we obtain 2x76 images, since 76 is the number of cameras in the GRAIN detector, and for each of them we store 2 images of size 32x32, representing the amplitude *i.e.* number of photons arrived each pixel, and the distribution of the arrival time (again on each pixel).
+
+A drdf file stores images labelled with their *uuid*, *event*-number, *camera*-number; the information contained in every camera can be retrived calling each specific pixel.
+
+In the *drdf_test* folder the user can find two useful tutorials for reading and writing a drdf file, from which it is possible to better understand the structure of the file.
 
 ## Running fast_resp
 
@@ -110,7 +115,7 @@ Before executing the software pay attention to have installed python3, togheter 
 Once logged in, the user may choose between two possibilities:
 - Execute *fast_resp.py*
 - Execute *splitted_resp.py*  submitting one or more jobs to HTCondor.
-In the first case the user may simply follow instructions provided in section [Running fast_resp.py](#running-fast_resp.py). 
+In the first case the user may simply follow instructions provided in section [Running fast_resp](#running-fast_resp). 
 In order to submit the fast response to HTCondor, `splitted_fast_resp.py` and `launch_splitted_response.sh` are provided to the user. They represent a fast and easy way to submit the job on the VM and retrive information on its status, creating also new folders to store the response output.
 
 ### HTCondor
@@ -221,7 +226,7 @@ As already said, the *response_N.drdf* files are the output of the *N* submitted
 The script is executed by the bash script, when all jobs are completed.
 
 # Output analysis
-
+The analysis of *response.drdf* can be done using the `read_drdf.py`.
 
 
 ### Submission on Personal Computer
