@@ -187,7 +187,7 @@ echo "Starting splitted_fast_resp response" #>> "$LOGS_FOLDER/calorimetry_respon
 touch $SCRIPT_FOLDER/splitted_fast_resp.sh
 > $SCRIPT_FOLDER/splitted_fast_resp.sh
 echo "#!/bin/bash" >> "$SCRIPT_FOLDER/splitted_fast_resp.sh"
-echo "#file name: .sh" >> "$SCRIPT_FOLDER/splitted_fast_resp.sh"
+echo "#file name: splitted_fast_resp.sh" >> "$SCRIPT_FOLDER/splitted_fast_resp.sh"
 echo "source /opt/exp_software/neutrino/env.sh"  >> "$SCRIPT_FOLDER/splitted_fast_resp.sh"
 echo "source /opt/exp_software/neutrino/ROOT/v6.20.00_py3/bin/thisroot.sh"  >> "$SCRIPT_FOLDER/splitted_fast_resp.sh"
 echo "LD_LIBRARY_PATH="/opt/exp_software/neutrino/PYTHON3_PACKAGES/:/opt/exp_software/neutrino/ROOT/v6.20.00_py3/lib:$LD_LIBRARY_PATH""  >> "$SCRIPT_FOLDER/splitted_fast_resp.sh"
