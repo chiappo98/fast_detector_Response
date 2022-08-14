@@ -1,16 +1,16 @@
 # Table of contents
 - [Fast detector response](#fast-detector-response)
 - [The physics case](#the-physics-case)
-- [Running the script](#running-the-script)
+- [Running the simulation](#running-the-simulation)
   - [Account request](#account-request)
   - [Required softwares](#required-softwares)
     - [The drdf module](#the-drdf-module)
-  - [Running fast_resp.py](#running-fast_resp-py)
+  - [Running fast_resp](#running-fast_resp)
   - [Submission on Virtual Machine](#submission-on-virtual-machine)
-    - [Fast_resp installation](#fast_resp-installation)
+    - [Fast Response installation](#fast-response-installation)
     - [HTCondor](#htcondor)
     - [Launching a production](#launching-a-production)
-
+- [Output analysis](#output-analysis)
 
 # Fast detector response
 
@@ -30,9 +30,9 @@ SAND in turn has three modules enclosed in a superconducting magnet: a Straw Tub
 The GRAIN (GRanular Argon fot Interctions of Neutrinos) module, part of the SAND (System for on-Axis Neutrino Detection) detector of the DUNE experiment, a long-baseline experiment for the detection of artificial and cosmic neutrinos.
 GRAIN is a vessel containing ~1 ton of liquid Argon (LAr) in which neutrinos can interact. The charged particles generated in these interactions move inside the LAr emmitting scintillation light, which is detected by SiPMs placed on the walls of the vessel. As already explained, the SiPMs are arranged in 76 cameras, which consist in 32x32 matrices.
 
-# Running the script
+# Running the simulation
 
-It is possile to run the script both on a local device or on a Virtual Machine. 
+It is possile to run the simulation of the detector response both on a local device or on a Virtual Machine. 
 If your intent is the submission on a local machine you can skip the following sections, going directly to [Launching a production](#launching-a-production).
 
 However, to simulate a large number of events it is much more conveninet to rely on a virtual machine, which allows for a faster execution time exploiting the possibility of running multiple events at the same time.
@@ -61,7 +61,7 @@ Installing this repository the user will get automaticly the `drdf.py` file. For
 ### The drdf module
 
 
-## Running fast_resp.py
+## Running fast_resp
 
 *fast_resp.py* takes in input 3 parameters and has 4 additional options.
 The submission comand therefore is
@@ -70,8 +70,8 @@ python3 fast_resp.py <config_file> <input_ROOT_file> <output_drdf_file> -nc -e <
 ```
 where 
 - `config_file`: contains some parameters for the DAQ simulation, such as the PDE and cross-talk probability for the SiPM sensors, togheter with their physical dimensions. The file name is *config.xml*.
-- `input_ROOT_file`: is a file named *sensors.root*, which contains all the information about the photons propagating from the charged particles trajetories towards the sensors surface. In particular it provides the energy, arrival time and inpact coordinates of each photon.
-- `output_drdf_file`: is usually a file named *response.drdf*. It is an image file in a custom-made format. The single response.drdf file contains the 2D plot of all the sensor matrices with the number of photons detected on each SiPM and the arrival time of the first one of them.
+- `input_ROOT_file`: a file named *sensors.root*, which contains all the information about the photons propagating from the charged particles trajetories towards the sensors surface. In particular it provides the energy, arrival time and inpact coordinates of each photon.
+- `output_drdf_file`: a file named *response.drdf*. It is an image file in a custom-made format. The single response.drdf file contains the 2D plot of all the sensor matrices with the number of photons detected on each SiPM and the arrival time of the first one of them.
 - `-nc` option: this options allows the user to retrive the total number of photons arrived on each SiPM without considering, for example, PDE or cross-talk.
 - `-e` option: allows the user to specify the number of event to be computed, if different from the total one.
 - `-s` option: allows the user to specify the starting event, if different from 0. To be used *only* if the number of event is *smaller* than the total one.
@@ -83,11 +83,11 @@ As already stressed, if the user's intent is run the response on his local devic
 
 ## Submission on Virtual Machine
 
-A Virtual Machine offers the possibility to use a greater computation power wrt that we can reach on our local device.
+A Virtual Machine offers the possibility to use a greater computation power wrt the one we can reach on our local device.
 
 The first thing to do is to install the softwares on the VM.
 
-### Fast_resp installation
+### Fast response installation
 
 Connect first to bastion.cnaf.infn.it, the CNAF gateway, and then login on the neutrino-01 machine. From a local terminal:
 ```
@@ -115,7 +115,7 @@ In order to submit the fast response to HTCondor, `splitted_fast_resp.py` and `l
 
 ### HTCondor
 
-The power of HTCondor batch system is the possibility to submit jobs in parallel. In our case for example, one may submit *n* jobs to HTCondor, running *n*-times the fast response on the same set of events or, (and this is what *launch_splitted_response.sh* does) *n*-times the fast response on *n* different sets of events. 
+The power of HTCondor batch system is the possibility to submit jobs in parallel. In our case for example, one may submit *N* jobs to HTCondor, running *n*-times the fast response on the same set of events or, (and this is what *launch_splitted_response.sh* does) *N*-times the fast response on *N* different sets of events. 
 
 The usage of HTCondor on *neutrino-01* for the fast response allows to split the events we have to process into subsamples which can run simultaneously, shortening the execution time.
 
@@ -142,33 +142,40 @@ For more information about HTCondor read [HTC - Job Submission](https://confluen
 
 The fast response is coded inside *splitted_fast_resp.py*. This program works in a very similar way wrt *fast_resp.py*, except for the fact that it is optimised for parallel submission on HTCondor and that the input parameters are given through a *config.txt* file.
 
-Starting from the configuration file, it has the following structure:
+Therefore the script will be executed with the command
+```
+python3 splitted_fast_resp.py <config_file>
+```
+The configuration file has the following structure:
 ```
 <configfile>      #configuration .xml file
 <fname>           #simulation output .root file
-<wfile>           #output .img file
+<wfile>           #output .drdf file
 <nocut>           #count total number of photons  (True or False)
-<jobNumber>       #number of submitted job from bash script
-<jobSize>         #size of submitted job from bash script
+<jobNumber>       #number of current job
+<jobSize>         #size of submitted job 
 <start_evn>       #staring event (if not 0)
 <idrun>           #(True or False) run identifier (UUID)   ---> if True, read also line 7
 <idrun>           #idrun 
 ```
-The parameters are written in the config file by the bash script, without any space or any other sign. *launch_splitted_response.sh* further copy and modifies the original *config.txt* into *#n* configuration files (named *config_n.txt*), necessary for the submission of *#n* parallel jobs on HTCondor.
+Here, unlike in *fast_resp.py*, the `-e` option is substituted by `<jobNumber>` and `<jobSize>`: the number of the current job (among the *N* submitted) and its size (in 'number of events'). In this way the program can extract from *sensors.root* the events which has to process in that particular job, computing the range $(start, stop)$ where `start = <start_evn> + <jobNumber>*<jobSize>` and `stop = <start_evn> + (<jobNumber>+1)*<jobSize>`.
 
+The output file of a single job is named *response_n.drdf*, where *N* is the number of the particular job.
+
+These configuration parameters are written in the configuration file by *launch_splitted_response.sh*, without any space or any other sign. The bash script further copy and modifies the original *config.txt* into *N* configuration files (named *config_N.txt*), necessary for the submission of *N* parallel jobs on HTCondor.
 
 ### Launching a production
 
 Once logged on neutrino-01 (same procedure applied in [Fast_resp installation](#fast_resp-installation)) you can launch the detector response through the bash script with the following command
 ```
-bash launch_splitted_response.sh -i <INPUT_file_PATH> -f <OUTPUT_folder_PATH> -d <OUTPUT_folder_NAME> -e <MAX_event_NUMBER> -s <JOB_SIZE> -x <STARTING_EVENT>
+bash launch_splitted_response.sh -i <INPUT_file_PATH> -f <OUTPUT_folder_PATH> -d <OUTPUT_folder_NAME> -e <EVENT_NUMBER> -s <JOB_SIZE> -x <STARTING_EVENT>
 ```
 where
-- `-e` is the same option given in ast_resp.py, to specify the maximum number of events to be analysed.
-- `-s` determines the size of the job, *i.e.* the number of events processed in each job.
-- `-x` gives the possibility to specify the starting event, if the number of events given is *less* than the total one.
-
-Notice that when specifying the *output_folder_path* you don't have to insert the name of the output folder, which is instead to be specified in the following argument.
+- `-e` (compulsory) is the same option given in *fast_resp.py* to specify the number of events to be analysed.
+- `-s` (compulsory) determines the size of the job, *i.e.* the number of events processed in each job.
+- `-x` (optional) gives the possibility to specify the starting event, if the number of events given is *less* than the total one.
+The number of parallel jobs then will be computed as `EVENT_NUMBER/JOB_SIZE`.
+Notice that when specifying the *output_folder_path* you don't have to insert the name of the folder, which is instead to be specified in the following argument (-d).
 
 There is also the possibility to run the simulation in backgroud, using the commad
 ```
@@ -209,6 +216,13 @@ The output structure is as follows:
         ├─ response_1.drdf        # pixel signal output in drdf format of event 1
         └─ ... 
 ```
+As already said, the *response_N.drdf* files are the output of the *N* submitted jobs. At this point, the `merge.py` script allows to merge them all into a single file *response.drdf*, which is more easy to analyse. 
+
+The script is executed by the bash script, when all jobs are completed.
+
+# Output analysis
+
+
 
 ### Submission on Personal Computer
 In order to be able to submit this code on your PC, the following requirements are essential:
