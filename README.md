@@ -6,7 +6,7 @@
   - [Required softwares](#required-softwares)
     - [The drdf module](#the-drdf-module)
   - [Running fast_resp](#running-fast_resp)
-  - [Submission on Virtual Machine](#submission-on-virtual-machine)
+  - [Submission on batch system](#submission-on-batch-system)
     - [Fast Response installation](#fast-response-installation)
     - [HTCondor](#htcondor)
     - [Launching a production](#launching-a-production)
@@ -32,7 +32,7 @@ GRAIN is a vessel containing ~1 ton of liquid Argon (LAr) in which neutrinos can
 
 # Running the simulation
 
-It is possile to run the simulation of the detector response both on a local device or on a Virtual Machine. 
+It is possile to run the simulation of the detector response both on a local device or on a remote machine. 
 If your intent is the submission on a local machine you can skip the following sections, going directly to [Launching a production](#launching-a-production).
 
 However, to simulate a large number of events it is much more conveninet to rely on a virtual machine, which allows for a faster execution time exploiting the possibility of running multiple events at the same time.
@@ -86,7 +86,7 @@ The input file is obtained through the processing, with other sofwares, of the G
 
 As already stressed, if the user's intent is run the response on his local device, the procedure described above its enough. If instead he wants to use a Virtual Machine the following section could be useful.
 
-## Submission on Virtual Machine
+## Submission on batch system
 
 A Virtual Machine offers the possibility to use a greater computation power wrt the one we can reach on our local device.
 
@@ -187,6 +187,8 @@ There is also the possibility to run the simulation in backgroud, using the comm
 nohup bash launch_splitted_response.sh -i <INPUT_file_PATH> -f <OUTPUT_folder_PATH> -d <OUTPUT_folder_NAME> -e <MAX_event_NUMBER> -s <JOB_SIZE> -x <STARTING_EVENT> > out.log &
 ```
 To check how the job proceeds just look inside the *out.log* file.
+
+**ATTENTION:** in order to launch succesfully a production the input files have to be copied to a folder somewhere in the path `/storage/gpfs_data/neutrino/SAND-LAr/` 
 
 The output structure is as follows:
 ```bash
