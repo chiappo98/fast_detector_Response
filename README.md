@@ -188,7 +188,7 @@ nohup bash launch_splitted_response.sh -i <INPUT_file_PATH> -f <OUTPUT_folder_PA
 ```
 To check how the job proceeds just look inside the *out.log* file.
 
-**ATTENTION:** in order to launch succesfully a production the input files have to be copied to a folder somewhere in the path `/storage/gpfs_data/neutrino/SAND-LAr/` 
+**ATTENTION:** in order to launch succesfully a production the input files have to be copied to a folder somewhere in the path `/storage/gpfs_data/neutrino/SAND-LAr/`, the shared folder accessible by HTCondor.
 
 The output structure is as follows:
 ```bash
@@ -228,8 +228,13 @@ As already said, the *response_N.drdf* files are the output of the *N* submitted
 The script is executed by the bash script, when all jobs are completed.
 
 # Output analysis
-The analysis of *response.drdf* can be done using the `read_drdf.py`.
+The analysis of *response.drdf* can be done using `fast_analysis.py`.
+This program is able to read the drdf file showing the results of the simulations. Since the *sensors.root* file contains also the energy of the incoming photons we can use this information to obtain a calibration coefficient. In particular we plot the energy transported by photons wrt the number of photons detected by SiPMs. This allows to compute the coefficient form which, measuring the number of photons detected we can obtain the energy of the scintillation photons (proportional to the energy of the charged particles generated from neutrino interactions).
 
+Another option of *fast_analysis.py* is the possibility to plot the distribution of photons on each camera, for all the simulated events. This is only an option, disabled as default, since it takes a large amount of time. However, once enabled, the images of the 76 cameras of the *N*-th event will be saved in the *event_N* folder, inside the *camera_folder*.
+```
+
+```
 
 ### Submission on Personal Computer
 In order to be able to submit this code on your PC, the following requirements are essential:
