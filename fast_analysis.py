@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import drdf
 import uuid
 import numpy as np
@@ -44,13 +46,12 @@ def load_sensor_data(inFile, treekey, evn):  #arguments are: filename, camera, e
         
 if __name__ == '__main__':
 
-    #parser = argparse.ArgumentParser()    
-    drdf_calo='/home/NEUTRINO/chiappon/calorimetry/calo_2reduced/response_cut.drdf'
-    sensor_file = '/storage/gpfs_data/neutrino/SAND-LAr/SAND-LAr-OPTICALSIM-PROD/GRAIN/test_fast_chiappo/sensors.root'
-    output_path="/home/NEUTRINO/chiappon/calorimetry/calo_2test"
-    jobSize = 1
-    jobNumber = 2        #number of total jobs
-    start_evn = 0
+    drdf_calo = sys.argv[1]
+    sensor_file = sys.argv[2]
+    output_path = sys.argv[3]
+    event_number = int(sys.argv[4])      #number of total jobs
+    start_evn = int(sys.argv[5])
+    plot_cameras = (sys.argv[6]).lower() in ['yes']
     
     if not os.path.exists(output_path):
         os.mkdir(output_path)
@@ -85,7 +86,7 @@ if __name__ == '__main__':
     print('Reading sensors.root')
     inFile = ROOT.TFile.Open(sensor_file, "READ")         #file sensors.root
     klist = inFile.GetListOfKeys()
-    stop = jobSize*jobNumber + start_evn  
+    stop = event_number + start_evn  
     event_energy = np.empty(0)
     for evn in range(start_evn,stop):
        print('Event',evn)
