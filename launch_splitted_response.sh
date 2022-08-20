@@ -1,66 +1,19 @@
 #!/bin/bash
-while getopts "i:f:d:e:s:x:" o; do      
+while getopts "c:" o; do
   case "$o" in
-    i)  INPUT=${OPTARG};;
-    #s)  SCRIPT_FOLDER=${OPTARG};;
-    f)  OUT_PATH=${OPTARG} ;;
-    d)  NEW_DIR=${OPTARG} ;;
-    #n)  REP_NUM=${OPTARG} ;;
-    e)  EVENT_NUMBER=${OPTARG} ;;
-    s)  JOB_SIZE=${OPTARG} ;;
-    x)  START_EVN=${OPTARG} ;;
-
+    c)  CONFIG=${OPTARG}; CONFIG_FLAG=true;;
   esac
 done
 
-if [ ! -f "$INPUT" ]; then
-  echo "$INPUT not found! Stopping the script."
+if [ ! $CONFIG_FLAG ]; then
+  echo "No config file defined!"
   exit 2
 fi
 
-if [ ! -f "$OUT_PATHT" ]; then
-  echo "OUT_PATH not found! Stopping the script."
+if [ ! -f $CONFIG ]; then
+  echo "$CONFIG not found! Stopping the script."
   exit 2
 fi
-
-if [ -z "${NEW_DIR}" ]; then 
-    echo "NEW_DIR name not provided! A default one is given: response_folder."
-    NEW_DIR=response_folder
-fi
-
-if [ ! $EVENT_NUMBER ]; then
-  echo "EVENT_NUMBER not provided! Stopping the script."
-  exit 2
-fi
-
-if [ -z "${JOB_SIZE}" ]; then 
-    echo "JOB_SIZE not provided! Default is 1."
-    JOB_SIZE=1
-fi
-
-if [ -z "${START_EVN}" ]; then 
-    START_EVN=0
-fi
-
-if [[ $JOB_SIZE > $EVENT_NUMBER ]]; then
-  echo "Invalid JOB_SIZE! Stopping the script."
-  exit 2
-fi
-
-##NEW_DIR=/mnt/c/Users/Pc/SCexam/productions/test1
-##INPUT=/mnt/c/Users/Pc/SCexam/edeo200_203/intermediate/inter_0/sensors_0.root 
-##SCRIPT_FOLDER=/mnt/c/Users/Pc/SCexam/fast_detector_Response/
-
-#SCRIPT_FOLDER=/storage/gpfs_data/neutrino/SAND-LAr/SAND-LAr-GRAIN-CALORIMETRY/scratch/splitted_fast_resp_submission/${NEW_DIR}
-#SCRIPT_PATH=/storage/gpfs_data/neutrino/SAND-LAr/SAND-LAr-GRAIN-CALORIMETRY/scratch/splitted_fast_resp_submission/
-#OUTPUT_FOLDER=/storage/gpfs_data/neutrino/SAND-LAr/SAND-LAr-GRAIN-CALORIMETRY/scratch/splitted_fast_resp_submission/${NEW_DIR}/output
-SCRIPT_FOLDER=${OUT_PATH}/${NEW_DIR}
-OUTPUT_FOLDER=${OUT_PATH}/${NEW_DIR}/output
-CONFIG=${SCRIPT_FOLDER}/fast_detector_Response/config.xml
-EXECUTABLE=${SCRIPT_FOLDER}/fast_detector_Response/drdf.py
-LOGS_FOLDER=${OUT_PATH}/${NEW_DIR}/logs
-TMP_LOG=${LOGS_FOLDER}/tmp_log
-JOBNUMBER=$(( ($EVENT_NUMBER + $JOB_SIZE - 1) / $JOB_SIZE ))
 
 function setup_prod_dir() {
   mkdir -p $SCRIPT_FOLDER
@@ -150,22 +103,22 @@ function check_condor() {
   done
 }
 
-echo "Running splitted_fast_resp over ${EVENT_NUMBER} events, splitted in $JOBNUMBER jobs of size $JOB_SIZE"
+echo "Running splitted_fast_resp over ${EVENT_NUMBER} events, splitted in ${JOBNUMBER} jobs of size ${JOB_SIZE}"
 echo "Starting event: ${START_EVN}"
 echo "Input file : ${INPUT}"
-echo "Setting up production directory at $SCRIPT_FOLDER"
+echo "Setting up production directory at ${SCRIPT_FOLDER}"
 setup_prod_dir
 check_errors
 
 touch $SCRIPT_FOLDER/config.txt
 > $SCRIPT_FOLDER/config.txt
-echo "${CONFIG}" >> "$SCRIPT_FOLDER/config.txt"                        #configfile
-echo "${INPUT}" >> "$SCRIPT_FOLDER/config.txt"                          #path to sensors.root  ---------------->>>>could take as input also the sensor_${ID}.root
+echo "${RESPONSE_CONFIG}" >> "$SCRIPT_FOLDER/config.txt"                        #configfile
+echo "${INPUTFILE}" >> "$SCRIPT_FOLDER/config.txt"                          #path to sensors.root  ---------------->>>>could take as input also the sensor_${ID}.root
 echo "${OUTPUT_FOLDER}/response.drdf" >> "$SCRIPT_FOLDER/config.txt"    #output file name
 echo "False" >> "$SCRIPT_FOLDER/config.txt"                            #no-cut option
 echo "1" >> "$SCRIPT_FOLDER/config.txt"                        #jobNumber
 echo "${JOB_SIZE}" >> "$SCRIPT_FOLDER/config.txt"                        #jobSize
-echo "${START_EVN}" >> "$SCRIPT_FOLDER/config.txt"                     #start from event n
+echo "${STARTING_EVENT}" >> "$SCRIPT_FOLDER/config.txt"                     #start from event n
 echo "False" >> "$SCRIPT_FOLDER/config.txt"                            #idrun
 echo "" >> "$SCRIPT_FOLDER/config.txt"
 
@@ -193,7 +146,7 @@ echo "source /opt/exp_software/neutrino/ROOT/v6.20.00_py3/bin/thisroot.sh"  >> "
 echo "LD_LIBRARY_PATH="/opt/exp_software/neutrino/PYTHON3_PACKAGES/:/opt/exp_software/neutrino/ROOT/v6.20.00_py3/lib:$LD_LIBRARY_PATH""  >> "$SCRIPT_FOLDER/splitted_fast_resp.sh"
 echo "PATH="/opt/exp_software/neutrino/PYTHON3_PACKAGES/:/opt/exp_software/neutrino/ROOT/v6.20.00_py3/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:$PATH"" >> "$SCRIPT_FOLDER/splitted_fast_resp.sh"
 echo "MANPATH="/opt/exp_software/neutrino/ROOT/v6.20.00_py3/man:$MANPATH:"" >> "$SCRIPT_FOLDER/splitted_fast_resp.sh"
-echo "python3 $SCRIPT_PATH/splitted_fast_resp.py \${1}> $LOGS_FOLDER/splitted_fast_resp.out 2> $LOGS_FOLDER/splitted_fast_resp.err" >> "$SCRIPT_FOLDER/splitted_fast_resp.sh"
+echo "python3 ${SCRIPT_PATH}/splitted_fast_resp.py \${1}> $LOGS_FOLDER/splitted_fast_resp.out 2> $LOGS_FOLDER/splitted_fast_resp.err" >> "$SCRIPT_FOLDER/splitted_fast_resp.sh"
 
 # Create the job .sub file
 touch "$SCRIPT_FOLDER/splitted_fast_resp.sub"
@@ -218,22 +171,32 @@ echo "queue ${JOBNUMBER}" >> "$SCRIPT_FOLDER/splitted_fast_resp.sub"
 
 start=`date +%s`
 echo "Submitting job on HTC"
-condor_submit -name sn-02.cr.cnaf.infn.it -spool "$SCRIPT_FOLDER/splitted_fast_resp.sub" > $LOGS_FOLDER/tmp_log
+condor_submit -name sn-02.cr.cnaf.infn.it -spool "${SCRIPT_FOLDER}/splitted_fast_resp.sub" > $LOGS_FOLDER/tmp_log
 check_errors
 JOB_ID=$(awk -F "cluster " '{if($2 != "")print $2;if($2 != "") exit;}' "$LOGS_FOLDER/tmp_log")
-JOB_ID=$(echo $JOB_ID | sed "s/\.//g")
+JOB_ID=$(echo ${JOB_ID} | sed "s/\.//g")
 #echo "$JOB_ID" > "$LOGS_FOLDER/tmp_log"
 #JOB_ID=$(head -n 1 $LOGS_FOLDER/tmp_log)
-echo $JOB_ID
-check_condor $JOB_ID $JOBNUMBER
+echo ${JOB_ID}
+check_condor ${JOB_ID} ${JOBNUMBER}
 echo "Job completed"
 
 end=`date +%s`
 echo "Execution time for splitted_fast_resp was `expr $end - $start` seconds." >> $LOGS_FOLDER/time.log
 
 #merge response.drdf files
-FILENUMBER=$(($EVENT_NUMBER / $JOB_SIZE ))
+FILENUMBER=$((${EVENT_NUMBER} / ${JOB_SIZE} ))
 echo "Merging drdf files"
-python3 $SCRIPT_PATH/merge.py $OUTPUT_FOLDER $FILENUMBER
+python3 ${SCRIPT_PATH}/merge.py ${OUTPUT_FOLDER} ${FILENUMBER}
 check_errors
 echo "Merge completed"
+
+#analyse response.drdf
+if [[ $FAST_ANALYSIS = "yes" ]]; then
+  echo "Running fast_analysis.py"
+  echo "Setting analysis directory at ${SCRIPT_FOLDER}/output_analysis"
+  mkdir -p ${SCRIPT_FOLDER}/output_analysis
+  python3 ${SCRIPT_PATH}/fast_analysis.py ${OUTPUT_FOLDER}/response_cut.drdf ${INPUTFILE} ${SCRIPT_FOLDER}/output_analysis ${EVENT_NUMBER} ${STARTING_EVENT} ${PLOT_CAMERAS}
+  check_errors
+  echo "Anlaysis completed"
+fi  
