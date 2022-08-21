@@ -152,7 +152,7 @@ Therefore the script will be executed with the command
 python3 splitted_fast_resp.py <config_file>
 ```
 The configuration file has the following structure:
-```
+```bash
 <configfile>      #configuration .xml file
 <fname>           #simulation output .root file
 <wfile>           #output .drdf file
@@ -172,6 +172,37 @@ These configuration parameters are written in the configuration file by *launch_
 ### Launching a production
 
 Once logged on neutrino-01 (same procedure applied in [Fast_resp installation](#fast_resp-installation)) you can launch the detector response through the bash script with the following command
+```
+bash launch_splitted_response.sh -c <RESPONSE_CONFIG>
+```
+where *<RESPONSE_CONFIG>* is a *txt* file containing all the configuration parameters for starting the production.
+The file must be compiled by the user according to the followig structure:
+```makefile
+inputFile = /path/to/input/file
+new_Dir_Name = <name>
+eventNumber = <number>
+jobSize = <number>
+startingEvent = <number>
+responseConfig = /path/to/config/xml/file
+FastAnalysis = <yes/no>
+PlotCameras = <yes/no>
+```
+* `inputFile` must be an absolute path to *sensors.root*.
+* `new_Dir_Name` is the name of the new directory where files from detector response will be saved.
+* `eventNumber` must be the number of events to simulate in the detector Response simulation.
+* `jobSize` is used to set the number of events to simulate in every job (and the number of submitted jobs as a consequence).
+* `startingEvent` is used to choose the starting entry of the file.
+* `responseConfig` is used to choose the configuration file for the detector response.
+* `FastAnalysis` is used to analyse the detector response output. More on this below.
+* `PlotCameras` is used to plot the photon distribution of each camera.
+
+Please note that:
+* the order of the parameters can be changed
+* **there must be** a space before and after the =
+* there should not be blank lines between the parameters (to be confirmed)
+
+
+
 ```
 bash launch_splitted_response.sh -i <INPUT_file_PATH> -f <OUTPUT_folder_PATH> -d <OUTPUT_folder_NAME> -e <EVENT_NUMBER> -s <JOB_SIZE> -x <STARTING_EVENT>
 ```
@@ -231,9 +262,22 @@ The script is executed by the bash script, when all jobs are completed.
 The analysis of *response.drdf* can be done using `fast_analysis.py`.
 This program is able to read the drdf file showing the results of the simulations. Since the *sensors.root* file contains also the energy of the incoming photons we can use this information to obtain a calibration coefficient. In particular we plot the energy transported by photons wrt the number of photons detected by SiPMs. This allows to compute the coefficient form which, measuring the number of photons detected we can obtain the energy of the scintillation photons (proportional to the energy of the charged particles generated from neutrino interactions).
 
-Another option of *fast_analysis.py* is the possibility to plot the distribution of photons on each camera, for all the simulated events. This is only an option, disabled as default, since it takes a large amount of time. However, once enabled, the images of the 76 cameras of the *N*-th event will be saved in the *event_N* folder, inside the *camera_folder*.
-```
-
+Another option of *fast_analysis.py* is the possibility to plot the distribution of photons on each camera, for all the simulated events. This is only an option, disabled as default, since it takes a large amount of time. However, once enabled, the images of the 76 cameras of the *N*-th event will be saved in the *event_N* folder, inside *camera_folder*.
+```bash
+- output_analysis                           
+    ├─ LOGenergyVamplitude.png              # energy vs amplitude in logaritmic scale
+    ├─ energyVamplitude.png                 # energy vs amplitude
+    │
+    └─ cameras_folder
+        ├─ event0                 # folder with cameras from event 0 
+        │    ├─ cam1.png          # photon distribution on camera 1
+        │    ├─ cam2.png          # photon distribution on camera 2
+        │    ├─ cam3.png          # photon distribution on camera 3        
+        │    └─ ...
+        │
+        ├─ event1                 # folder with cameras from event 1
+        ├─ event2                 # folder with cameras from event 2
+        └─ ...     
 ```
 
 ### Submission on Personal Computer
