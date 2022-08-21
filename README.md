@@ -12,6 +12,7 @@
   - [Launching a production](#launching-a-production)
     - [Input file](#input-file)
     - [Job size](#job-size)
+    - [Production folder](#production-folder)
 - [Output analysis](#output-analysis)
 
 # Fast detector response
@@ -165,7 +166,7 @@ The configuration file has the following structure:
 <idrun>           #(True or False) run identifier (UUID)   ---> if True, read also line 7
 <idrun>           #idrun 
 ```
-Here, unlike in *fast_resp.py*, the `-e` option is substituted by `<jobNumber>` and `<jobSize>`: the number of the current job (among the *N* submitted) and its size (in 'number of events'). In this way the program can extract from *sensors.root* the events which has to process in that particular job, computing the range $(start, stop)$ where `start = <start_evn> + <jobNumber>*<jobSize>` and `stop = <start_evn> + (<jobNumber>+1)*<jobSize>`.
+Here, unlike in *fast_resp.py*, the `-e` option is substituted by `<jobNumber>` and `<jobSize>`: the number of the current job (among the *N* submitted) and its size (in 'number of events'). In this way the program can extract from *sensors.root* the events which has to process in that particular job, computing the range $(start, stop)$ where `start = start_evn + jobNumber*jobSize` and `stop = start_evn + (jobNumber + 1)*jobSize`.
 
 The output file of a single job is named *response_n.drdf*, where *N* is the number of the particular job.
 
@@ -181,6 +182,7 @@ where *<RESPONSE_CONFIG>* is a *txt* file containing all the configuration param
 The file must be compiled by the user according to the followig structure:
 ```makefile
 inputFile = /path/to/input/file
+ProductionFolder = /path/to/output/folder
 new_Dir_Name = <name>
 eventNumber = <number>
 jobSize = <number>
@@ -190,6 +192,7 @@ FastAnalysis = <yes/no>
 PlotCameras = <yes/no>
 ```
 * `inputFile` must be an absolute path to *sensors.root*.
+* `ProductionFolder` must be an absolute path to the output folder.
 * `new_Dir_Name` is the name of the new directory where files from detector response will be saved.
 * `eventNumber` must be the number of events to simulate in the detector Response simulation.
 * `jobSize` is used to set the number of events to simulate in every job (and the number of submitted jobs as a consequence).
@@ -225,10 +228,24 @@ To check how the job proceeds just look inside the *out.log* file.
 
 ### Input file
 
+This is the file used as input by the simulation. The path to this file must be specified in the config file as described above.
+
+For *sensors.root* files the default location should be somewhere inside
+```
+/storage/gpfs_data/neutrino/SAND-LAr/
+```
+
 ### Job size
 
+The jobSize parameter is used to define the number of events to be simulated in each job and, consequentially, to submit more jobs for the OptMen simulation. 
 
-The output structure is as follows:
+The number of jobs is computed as `eventNumber/jobSize`.
+
+For each job, different output files will be generated. The name of the files will be followed by the number of the job, *i.e. response_10.drdf*.
+
+### Production folder
+
+The output folder structure is the following:
 ```bash
 - outputFolder                            # root folder of the output files
     ├─ splitted_fast_resp.sub             # fast_resp submission file
