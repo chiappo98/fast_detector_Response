@@ -118,7 +118,7 @@ Before executing the software pay attention to have installed python3, togheter 
 Once logged in, the user may choose between two possibilities:
 - Execute *fast_resp.py*
 - Execute *splitted_resp.py*  submitting one or more jobs to HTCondor.
-In the first case the user may simply follow instructions provided in section [Running fast_resp](#running-fast_resp). 
+In the first case the user may simply follow instructions provided in section [Running response on local machine](#running-response-on-local-machine). 
 In order to submit the fast response to HTCondor, `splitted_fast_resp.py` and `launch_splitted_response.sh` are provided to the user. They represent a fast and easy way to submit the job on the VM and retrive information on its status, creating also new folders to store the response output.
 
 ## HTCondor
@@ -174,7 +174,7 @@ These configuration parameters are written in the configuration file by *launch_
 
 ## Launching a production
 
-Once logged on neutrino-01 (same procedure applied in [Fast_resp installation](#fast_resp-installation)) you can launch the detector response through the bash script with the following command
+Once logged on neutrino-01 (same procedure applied in [Fast Response installation](#fast-response-installation)) you can launch the detector response through the bash script with the following command
 ```
 bash launch_splitted_response.sh -c <RESPONSE_CONFIG>
 ```
