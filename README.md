@@ -118,8 +118,10 @@ Before executing the software pay attention to have installed python3, togheter 
 Once logged in, the user may choose between two possibilities:
 - Execute *fast_resp.py*
 - Execute *splitted_resp.py*  submitting one or more jobs to HTCondor.
-In the first case the user may simply follow instructions provided in section [Running response on local machine](#running-response-on-local-machine). 
-In order to submit the fast response to HTCondor, `splitted_fast_resp.py` and `launch_splitted_response.sh` are provided to the user. They represent a fast and easy way to submit the job on the VM and retrive information on its status, creating also new folders to store the response output.
+
+In the first case the user may simply follow instructions provided in section [Running response on local machine](#running-response-on-local-machine). The fast response simulation will then be performed on the neutrino-01 machine.
+
+In order to submit the fast response to HTCondor (exploiting its adavntages), `splitted_fast_resp.py` and `launch_splitted_response.sh` are provided to the user. They represent a fast and easy way to submit jobs on the batch system and retrive information on their status, creating at the same time new folders to store the response output.
 
 ## HTCondor
 
