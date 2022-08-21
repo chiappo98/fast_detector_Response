@@ -221,6 +221,11 @@ To check how the job proceeds just look inside the *out.log* file.
 
 **ATTENTION:** in order to launch succesfully a production the input files have to be copied to a folder somewhere in the path `/storage/gpfs_data/neutrino/SAND-LAr/`, the shared folder accessible by HTCondor.
 
+### Input file
+
+### Job size
+
+
 The output structure is as follows:
 ```bash
 - outputFolder                            # root folder of the output files
