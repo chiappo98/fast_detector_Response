@@ -1,15 +1,15 @@
 # Table of contents
 - [Fast detector response](#fast-detector-response)
 - [The physics case](#the-physics-case)
-- [Running the simulation](#running-the-simulation)
+- [Setting Up](#setting-up)
   - [Account request](#account-request)
   - [Required softwares](#required-softwares)
     - [The drdf module](#the-drdf-module)
-  - [Running fast_resp](#running-fast_resp)
-  - [Submission on batch system](#submission-on-batch-system)
-    - [Fast Response installation](#fast-response-installation)
-    - [HTCondor](#htcondor)
-    - [Launching a production](#launching-a-production)
+- [Running response on local machine](#running-response-on-local-machine)
+- [Submission on batch system](#submission-on-batch-system)
+  - [Fast Response installation](#fast-response-installation)
+  - [HTCondor](#htcondor)
+  - [Launching a production](#launching-a-production)
 - [Output analysis](#output-analysis)
 
 # Fast detector response
@@ -30,10 +30,10 @@ SAND in turn has three modules enclosed in a superconducting magnet: a Straw Tub
 The GRAIN (GRanular Argon fot Interctions of Neutrinos) module, part of the SAND (System for on-Axis Neutrino Detection) detector of the DUNE experiment, a long-baseline experiment for the detection of artificial and cosmic neutrinos.
 GRAIN is a vessel containing ~1 ton of liquid Argon (LAr) in which neutrinos can interact. The charged particles generated in these interactions move inside the LAr emmitting scintillation light, which is detected by SiPMs placed on the walls of the vessel. As already explained, the SiPMs are arranged in 76 cameras, which consist in 32x32 matrices.
 
-# Running the simulation
+# Setting Up
 
 It is possile to run the simulation of the detector response both on a local device or on a remote machine. 
-If your intent is the submission on a local machine you can skip the following sections, going directly to [Launching a production](#launching-a-production).
+If your intent is the submission on a local machine you can skip the following sections, going directly to [Running response on local machine](#running-response-on-local-machine).
 
 However, to simulate a large number of events it is much more conveninet to rely on a virtual machine, which allows for a faster execution time exploiting the possibility of running multiple events at the same time.
 
@@ -66,9 +66,9 @@ A drdf file stores images labelled with their *uuid*, *event*-number, *camera*-n
 
 In the *drdf_test* folder the user can find two useful tutorials for reading and writing a drdf file, from which it is possible to better understand the structure of the file.
 
-## Running fast_resp
+# Running response on local machine
 
-*fast_resp.py* takes in input 3 parameters and has 4 additional options.
+In order to run the detector response on local machine *fast_resp.py* must be used. It takes in input 3 parameters and has 4 additional options.
 The submission comand therefore is
 ```
 python3 fast_resp.py <config_file> <input_ROOT_file> <output_drdf_file> -nc -e <event_number> -s <start_event> -i <idrun>
@@ -86,13 +86,13 @@ The input file is obtained through the processing, with other sofwares, of the G
 
 As already stressed, if the user's intent is run the response on his local device, the procedure described above its enough. If instead he wants to use a Virtual Machine the following section could be useful.
 
-## Submission on batch system
+# Submission on batch system
 
 A Virtual Machine offers the possibility to use a greater computation power wrt the one we can reach on our local device.
 
 The first thing to do is to install the softwares on the VM.
 
-### Fast response installation
+## Fast response installation
 
 Connect first to bastion.cnaf.infn.it, the CNAF gateway, and then login on the neutrino-01 machine. From a local terminal:
 ```
@@ -118,7 +118,7 @@ Once logged in, the user may choose between two possibilities:
 In the first case the user may simply follow instructions provided in section [Running fast_resp](#running-fast_resp). 
 In order to submit the fast response to HTCondor, `splitted_fast_resp.py` and `launch_splitted_response.sh` are provided to the user. They represent a fast and easy way to submit the job on the VM and retrive information on its status, creating also new folders to store the response output.
 
-### HTCondor
+## HTCondor
 
 The power of HTCondor batch system is the possibility to submit jobs in parallel. In our case for example, one may submit *N* jobs to HTCondor, running *n*-times the fast response on the same set of events or, (and this is what *launch_splitted_response.sh* does) *N*-times the fast response on *N* different sets of events. 
 
@@ -143,7 +143,7 @@ All this sequence of job submission and monitor is embedded inside *launch_split
 
 For more information about HTCondor read [HTC - Job Submission](https://confluence.infn.it/display/TD/9+-+Job+submission) and the [HTC homepage](https://confluence.infn.it/display/TD/9+-+Job+submission).
 
-### Splitted fast response 
+## Splitted fast response 
 
 The fast response is coded inside *splitted_fast_resp.py*. This program works in a very similar way wrt *fast_resp.py*, except for the fact that it is optimised for parallel submission on HTCondor and that the input parameters are given through a *config.txt* file.
 
@@ -152,7 +152,7 @@ Therefore the script will be executed with the command
 python3 splitted_fast_resp.py <config_file>
 ```
 The configuration file has the following structure:
-```bash
+```makefile
 <configfile>      #configuration .xml file
 <fname>           #simulation output .root file
 <wfile>           #output .drdf file
@@ -169,7 +169,7 @@ The output file of a single job is named *response_n.drdf*, where *N* is the num
 
 These configuration parameters are written in the configuration file by *launch_splitted_response.sh*, without any space or any other sign. The bash script further copy and modifies the original *config.txt* into *N* configuration files (named *config_N.txt*), necessary for the submission of *N* parallel jobs on HTCondor.
 
-### Launching a production
+## Launching a production
 
 Once logged on neutrino-01 (same procedure applied in [Fast_resp installation](#fast_resp-installation)) you can launch the detector response through the bash script with the following command
 ```
