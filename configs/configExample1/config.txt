@@ -1,0 +1,9 @@
+inputFile = /path/to/input/file
+ProductionFolder = /path/to/output/folder
+new_Dir_Name = <name>
+eventNumber = <number>
+jobSize = <number>
+startingEvent = <number>
+responseConfig = /path/to/config/xml/file
+FastAnalysis = yes
+PlotCameras = no
