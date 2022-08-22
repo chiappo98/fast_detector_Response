@@ -16,44 +16,44 @@ if [ ! -f $CONFIG ]; then
 fi
 
 echo "========================================================"
-echo "             Loading configuration file\e[0m."
+echo "             Loading configuration file."
 echo "========================================================"
 
 INPUTFILE=$(awk -F "inputFile =" '{if($2 != "")print $2;if($2 != "") exit;}' "${CONFIG}")
 INPUTFILE=$(echo $INPUTFILE | sed "s/\\r\\n//g")
-echo "Input file: \e[4;96m${INPUTFILE}\e[0m"
+echo "Input file: ${INPUTFILE}"
 
 SCRIPT_PATH=$(awk -F "ProductionPath =" '{if($2 != "")print $2;if($2 != "") exit;}' "${CONFIG}")
 SCRIPT_PATH=$(echo $SCRIPT_PATH | sed "s/\\r\\n//g")
-echo "ProductionPath: \e[4;96m${SCRIPT_PATH}\e[0m"
+echo "ProductionPath: ${SCRIPT_PATH}"
 
 NEW_DIR=$(awk -F "new_Dir_Name =" '{if($2 != "")print $2;if($2 != "") exit;}' "${CONFIG}")
 NEW_DIR=$(echo $NEW_DIR | sed "s/\\r\\n//g")
-echo "new_Dir_Name: \e[4;96m${NEW_DIR}\e[0m"
+echo "new_Dir_Name: ${NEW_DIR}"
 
 EVENT_NUMBER=$(awk -F "eventNumber =" '{if($2 != "")print $2;if($2 != "") exit;}' "${CONFIG}")
 EVENT_NUMBER=$(echo $EVENT_NUMBER | sed "s/\\r\\n//g")
-echo "Event number: \e[4;96m${EVENT_NUMBER}\e[0m"
+echo "Event number: ${EVENT_NUMBER}"
 
 JOB_SIZE=$(awk -F "jobSize =" '{if($2 != "")print $2;if($2 != "") exit;}' "${CONFIG}")
 #JOB_SIZE=$(echo $JOB_SIZE | sed "s/\\r\\n//g")
-echo "Job size: \e[4;96m${JOB_SIZE}\e[0m"
+echo "Job size: ${JOB_SIZE}"
 
 STARTING_EVENT=$(awk -F "startingEvent =" '{if($2 != "")print $2;if($2 != "") exit;}' "${CONFIG}")
 STARTING_EVENT=$(echo $STARTING_EVENT | sed "s/\\r\\n//g")
-echo "Starting Event: \e[4;96m${STARTING_EVENT}\e[0m"
+echo "Starting Event: ${STARTING_EVENT}"
 
 RESPONSE_CONFIG=$(awk -F "responseConfig =" '{if($2 != "")print $2;if($2 != "") exit;}' "${CONFIG}")
 RESPONSE_CONFIG=$(echo $RESPONSE_CONFIG| sed "s/\\r\\n//g")
-echo "Response config: \e[4;96m${RESPONSE_CONFIG}\e[0m"
+echo "Response config:${RESPONSE_CONFIG}"
 
 FAST_ANALYSIS=$(awk -F "FastAnalysis =" '{if($2 != "")print $2;if($2 != "") exit;}' "${CONFIG}")
 FAST_ANALYSIS=$(echo $FAST_ANALYSIS | sed "s/\\r\\n//g")
-echo "FastAnalysis: \e[4;96m${FAST_ANALYSIS}\e[0m"
+echo "FastAnalysis: ${FAST_ANALYSIS}"
 
 PLOT_CAMERAS=$(awk -F "PlotCameras =" '{if($2 != "")print $2;if($2 != "") exit;}' "${CONFIG}")
 PLOT_CAMERAS=$(echo $PLOT_CAMERAS | sed "s/\\r\\n//g")
-echo "PlotCameras: \e[4;96m${PLOT_CAMERAS}\e[0m"
+echo "PlotCameras: ${PLOT_CAMERAS}"
 
 SELF=$(realpath $0)
 REALPATH=$(dirname $(realpath ${CONFIG})) #--relative-to $(dirname ${SELF})/configs))   #----->>>>need / <<<--------
@@ -75,5 +75,5 @@ TMP_LOG=${LOGS_FOLDER}/tmp_log
 JOBNUMBER=$(( (${EVENT_NUMBER} + ${JOB_SIZE} - 1) / ${JOB_SIZE} ))
 
 echo "========================================================"
-echo "                Configuration loaded.\e[0m"
+echo "                Configuration loaded."
 echo "========================================================"
