@@ -1,7 +1,7 @@
 # Table of contents
 - [Fast detector response](#fast-detector-response)
 - [The physics case](#the-physics-case)
-- [Setting Up](#setting-up)
+- [Before starting](#before-starting)
   - [Account request](#account-request)
   - [Required softwares](#required-softwares)
     - [The drdf module](#the-drdf-module)
@@ -33,7 +33,7 @@ SAND in turn has three modules enclosed in a superconducting magnet: a Straw Tub
 The GRAIN (GRanular Argon fot Interctions of Neutrinos) module, part of the SAND (System for on-Axis Neutrino Detection) detector of the DUNE experiment, a long-baseline experiment for the detection of artificial and cosmic neutrinos.
 GRAIN is a vessel containing ~1 ton of liquid Argon (LAr) in which neutrinos can interact. The charged particles generated in these interactions move inside the LAr emmitting scintillation light, which is detected by SiPMs placed on the walls of the vessel. As already explained, the SiPMs are arranged in 76 cameras, which consist in 32x32 matrices.
 
-# Setting Up
+# Before starting
 
 It is possile to run the simulation of the detector response both on a local device or on a remote machine. 
 If your intent is the submission on a local machine you can skip the following sections, going directly to [Running response on local machine](#running-response-on-local-machine).
@@ -107,7 +107,7 @@ this should put you in the folder
 /home/NEUTRINO/<HTC_user>
 ```
 
-from here, clone this repository in the preferred location
+from here, clone this repository in the preferred location inside 
 ```
 git@github.com:chiappo98/fast_detector_Response.git  
 ```
