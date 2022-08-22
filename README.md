@@ -5,9 +5,9 @@
   - [Account request](#account-request)
   - [Required softwares](#required-softwares)
     - [The drdf module](#the-drdf-module)
+  - [Fast Response installation](#fast-response-installation)
 - [Running response on local machine](#running-response-on-local-machine)
 - [Submission on batch system](#submission-on-batch-system)
-  - [Fast Response installation](#fast-response-installation)
   - [HTCondor](#htcondor)
   - [Launching a production](#launching-a-production)
     - [Input file](#input-file)
@@ -38,36 +38,63 @@ GRAIN is a vessel containing ~1 ton of liquid Argon (LAr) in which neutrinos can
 It is possile to run the simulation of the detector response both on a local device or on a remote machine. 
 If your intent is the submission on a local machine you can skip the following sections, going directly to [Running response on local machine](#running-response-on-local-machine).
 
-However, to simulate a large number of events it is much more conveninet to rely on a virtual machine, which allows for a faster execution time exploiting the possibility of running multiple events at the same time.
+However, to simulate efficiently a large number of events it is much more conveninet to rely, if possible, on distributed computing, which allows for a faster execution time exploiting the possibility of running multiple events at the same time. In particular I used the HTCondor batch system (more on this in section [HTCondor](#htcondor)).
 
 In order to be able to run the simulation of the detector response, few steps are required:
-- Own an account to be submit job on the Virtual Machine
-- Have Pyhton3 installed on the VM together with the PyROOT module
-- install the *drdf* package on the VM
-- Install the script on the VM
+- own an account to access a machine within the pool that may submit jobs, termed a submit machine
+- have all the required softwares installed on the submit machine
+- install the program executable and any needed input files for the fast detector response on the file system of the submit machine
 
 ## Account request
 
-In order submit the detector response on a Virtul Machine, an account is needed. Working on the detector response I access via ssh the Tier-1 user interfaces (UI) connecting to *bastion.cnaf.infn.it*, the CNAF gateway. I use in particular the experiment dedicated UI called *neutrino-01*, which is devoted to the DUNE collaboration, to which I belong to.
+In order submit the detector response on HTCondor, an account to access the submit machine is needed. Working on the detector response I access via ssh the Tier-1 user interfaces (UI) connecting to *bastion.cnaf.infn.it*, the CNAF gateway. I use in particular the experiment dedicated UI called *neutrino-01* machine (16core/8GB ram), which CNAF kindly provided to the DUNE collaboration, to which I belong to. The machine is reachable with ip 131.154.161.32 from *bastion.cnaf.infn.it*.
 
 [Here](https://confluence.infn.it/pages/viewpage.action?pageId=40665299) you can find more information on INFN-CNAF Tier-1.
 
-In the following sections I will always refer to job submission on the *neutrino-01* VM. However, users are free to adapt the programs, and in particular the bash script *launch_splitted_response.sh*, to the VM they have access to.
-
-The neutrino-01 machine adopts the HTCondor batch system (more on this in section [HTCondor](#htcondor)).
+In the following sections I will always refer to job submission on the *neutrino-01* machine, which adopts the HTCondor batch system. However, users can obviously use different submit machines. Furthermore, if the batch system is different form HTCondor, the *launch_splitted_response.sh* shell script has to be modified to include the new submission command.
 
 ## Required softwares
+
+On the file system of the submit machine Pyhton3 has to be installed. Looking at thefirst lines of the py programs in this repository users can check the additional modules which are needed (in particular I underline the need for the PyROOT module).
 
 The only software which is not available publicly is the drdf package, necessary to build the output files. 
 Installing this repository the user will get automaticly the `drdf.py` file. For the ones who have access to GIT repositories at *baltig.infn.it* (you need to be registered as guest at INFN - Sezione di Bologna), the same software is available [here](https://baltig.infn.it/dune/sand-optical/drdf).
 
 ### The drdf module
 
-*drdf* is a custom image format created by Nicolò Tosi (INFN - Section of Bologna) in order to store efficiently a high number of images, from multiple events. From a single event in fact we obtain 2x76 images, since 76 is the number of cameras in the GRAIN detector, and for each of them we store 2 images of size 32x32, representing the amplitude *i.e.* number of photons arrived each pixel, and the distribution of the arrival time (again on each pixel).
-
-A drdf file stores images labelled with their *uuid*, *event*-number, *camera*-number; the information contained in every camera can be retrived calling each specific pixel.
+*drdf* is a custom image format created by Nicolò Tosi (INFN - Section of Bologna) in order to store efficiently a high number of images, from multiple events. From a single event in fact we obtain 2x76 images, since 76 is the number of cameras in the GRAIN detector, and for each of them we store 2 images of size 32x32 pixels.
+The two images store respectively the amplitude (number of photons detected) of each pixel and the arrival time of the first photon, again on each pixel.
+A drdf file stores images labelled with their *uuid*, *event*-number, *camera*-number; the information contained in every camera can be retrived calling each specific pixel through its number (from 0 to 1023).
 
 In the *drdf_test* folder the user can find two useful tutorials for reading and writing a drdf file, from which it is possible to better understand the structure of the file.
+
+## Fast response installation
+
+Connect first to bastion.cnaf.infn.it, the CNAF gateway, and then login on the neutrino-01 machine. From a local terminal:
+```
+ssh <HTC_user>@bastion.cnaf.infn.it
+ssh <HTC_user>@131.154.161.32
+```
+this should put you in the folder
+```
+/home/NEUTRINO/<HTC_user>
+```
+from here, clone this repository in the preferred location **inside** `/storage/gpfs_data/neutrino/SAND-LAr/`
+```
+git@github.com:chiappo98/fast_detector_Response.git  
+```
+--------------------->>>>>>>>>>>to verify
+
+The fact that a the installation of the repository must be done inside a specific folder is due to the existence of a file system shared by the submit machine and the execute machine.
+
+At this point, the user may choose between two possibilities:
+- Execute *fast_resp.py* on neutrino-01 machine.
+- Execute *splitted_resp.py*  submitting one or more jobs to HTCondor.
+
+In the first case the user may simply follow instructions provided in section [Running response on local machine](#running-response-on-local-machine). 
+
+In order to submit the fast response to HTCondor (exploiting its adavntages), `splitted_fast_resp.py` and `launch_splitted_response.sh` are provided to the user. They represent a fast and easy way to submit jobs on the batch system and retrive information on their status, creating at the same time new folders to store the response output.
+
 
 # Running response on local machine
 
@@ -95,33 +122,6 @@ A Virtual Machine offers the possibility to use a greater computation power wrt 
 
 The first thing to do is to install the softwares on the VM.
 
-## Fast response installation
-
-Connect first to bastion.cnaf.infn.it, the CNAF gateway, and then login on the neutrino-01 machine. From a local terminal:
-```
-ssh <HTC_user>@bastion.cnaf.infn.it
-ssh <HTC_user>@131.154.161.32
-```
-this should put you in the folder
-```
-/home/NEUTRINO/<HTC_user>
-```
-
-from here, clone this repository in the preferred location inside 
-```
-git@github.com:chiappo98/fast_detector_Response.git  
-```
---------------------->>>>>>>>>>>to verify
-
-Before executing the software pay attention to have installed python3, togheter with all the modules which are imported in the python scripts.
-
-Once logged in, the user may choose between two possibilities:
-- Execute *fast_resp.py*
-- Execute *splitted_resp.py*  submitting one or more jobs to HTCondor.
-
-In the first case the user may simply follow instructions provided in section [Running response on local machine](#running-response-on-local-machine). The fast response simulation will then be performed on the neutrino-01 machine.
-
-In order to submit the fast response to HTCondor (exploiting its adavntages), `splitted_fast_resp.py` and `launch_splitted_response.sh` are provided to the user. They represent a fast and easy way to submit jobs on the batch system and retrive information on their status, creating at the same time new folders to store the response output.
 
 ## HTCondor
 
