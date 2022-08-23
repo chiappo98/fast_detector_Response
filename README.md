@@ -191,7 +191,6 @@ PlotCameras = <yes/no>
 ```
 * `inputFile` must be an absolute path to *sensors.root*.
 * `ProductionFolder` must be an absolute path to the output folder (output folder not included).
-* `new_Dir_Name` is the name of the output folder; the new directory where files from detector response will be saved.
 * `eventNumber` must be the number of events to simulate in the detector Response simulation.
 * `jobSize` is used to set the number of events to simulate in every job (and the number of submitted jobs as a consequence).
 * `startingEvent` is used to choose the starting entry of the file.
@@ -214,7 +213,7 @@ To check how the job proceeds just look inside the *out.log* file.
 
 ### Configuration file
 
-This repository contains a *configs* folder: it must be used to store the various configuration files. Each *config.txt* must be put inside a new folder with a specific name. The name of the folder will be the same of the production directory.
+This repository contains a *configs* folder: it must be used to store the various configuration files. Each *config.txt* must be put inside a new folder with a specific name. That name will be also the same of the production directory which will be created to store the output of the simulation.
 
 ### Input file
 
