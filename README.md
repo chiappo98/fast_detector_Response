@@ -93,7 +93,7 @@ In the first case the user may simply follow instructions provided in section [R
 
 In order to work with HTCondor (exploiting its adavntages) instead, `splitted_fast_resp.py` and `launch_splitted_response.sh` are provided to the user. They represent a fast and easy way to submit jobs on the batch system and retrive information on their status, creating at the same time new folders to store the response output.
 
-In both cases the output
+In both cases the output of the detector response will be the same, even if the two scripts are implemented in different ways.
 
 # Running fast_resp
 
@@ -113,14 +113,11 @@ where
 
 The input file is obtained through the processing, with other sofwares, of the GEANT4 simulation of a neutrino interaction inside liquid Argon. This leads to the sensors.root file. Since they are not the result of my work I won't upload here the softwares whole simulation chain.
 
-As already stressed, if the user's intent is run the response on his local device, the procedure described above its enough. If instead he wants to use a Virtual Machine the following section could be useful.
-
 # Submission on batch system
 
 A Virtual Machine offers the possibility to use a greater computation power wrt the one we can reach on our local device.
-
-The first thing to do is to install the softwares on the VM.
-
+---------------------------------------------------------- 
+Through CNAF the user can get access to the INFN computing centre, exploiting the use of Grid technology. HTCondor is a specialized batch system for managing compute-intensive jobs. 
 
 ## HTCondor
 
@@ -129,8 +126,8 @@ The power of HTCondor batch system is the possibility to submit jobs in parallel
 The usage of HTCondor on *neutrino-01* for the fast response allows to split the events we have to process into subsamples which can run simultaneously, shortening the execution time.
 
 In order to submit a job on HTCondor we have to prepare two files:
-- `splitted_fast_resp.sh` : contains the command to launch the python script *splitted_fast_resp.py* and the PATH to the needed softwares ---------------->>>>>>>>>is this the right term???????????
-- `splitted_fast_resp.sub` : contains the instructions to run the job on HTCondor, such as the name of the executable (*splitted_fast_resp.sh*), the names of log, err, and out files for the job, form which you can retrive informations on the execution of the job and eventually errors, and the number of jobs to be submitted.
+- `splitted_fast_resp.sh` : contains the command to launch the python script *splitted_fast_resp.py* and the PATH to the needed packages.
+- `splitted_fast_resp.sub` : contains the instructions to run jobs on HTCondor, such as the number of jobs to be submitted, the name of the executable (*splitted_fast_resp.sh*), the names of log, err, and out files for each job, form which you can retrive informations on the execution of the job and on eventual errors.
 
 The CNAF Tier-1 infrastructure provides a submit node for submission from local UI: *sn-02.cr.cnaf.infn.it*.
 To submit jobs locally, i.e. from CNAF UI, use the following command:
@@ -171,11 +168,11 @@ Here, unlike in *fast_resp.py*, the `-e` option is substituted by `<jobNumber>` 
 
 The output file of a single job is named *response_n.drdf*, where *N* is the number of the particular job.
 
-These configuration parameters are written in the configuration file by *launch_splitted_response.sh*, without any space or any other sign. The bash script further copy and modifies the original *config.txt* into *N* configuration files (named *config_N.txt*), necessary for the submission of *N* parallel jobs on HTCondor.
+These configuration parameters are written in the configuration file by *launch_splitted_response.sh*, without any space or any other sign. The script further copy and modifies the original *config.txt* into *N* configuration files (named *config_N.txt*), necessary for the submission of *N* parallel jobs on HTCondor.
 
 ## Launching a production
 
-Once logged on neutrino-01 (same procedure applied in [Fast Response installation](#fast-response-installation)) you can launch the detector response through the bash script with the following command
+Once logged on neutrino-01 (same procedure applied in [Fast Response installation](#fast-response-installation)) you can launch the detector response through the shell script with the following command
 ```
 bash launch_splitted_response.sh -c <RESPONSE_CONFIG>
 ```
@@ -193,8 +190,8 @@ FastAnalysis = <yes/no>
 PlotCameras = <yes/no>
 ```
 * `inputFile` must be an absolute path to *sensors.root*.
-* `ProductionFolder` must be an absolute path to the output folder.
-* `new_Dir_Name` is the name of the new directory where files from detector response will be saved.
+* `ProductionFolder` must be an absolute path to the output folder (output folder not included).
+* `new_Dir_Name` is the name of the output folder; the new directory where files from detector response will be saved.
 * `eventNumber` must be the number of events to simulate in the detector Response simulation.
 * `jobSize` is used to set the number of events to simulate in every job (and the number of submitted jobs as a consequence).
 * `startingEvent` is used to choose the starting entry of the file.
@@ -207,25 +204,13 @@ Please note that:
 * **there must be** a space before and after the =
 * there should not be blank lines between the parameters (to be confirmed)
 
-
-
-```
-bash launch_splitted_response.sh -i <INPUT_file_PATH> -f <OUTPUT_folder_PATH> -d <OUTPUT_folder_NAME> -e <EVENT_NUMBER> -s <JOB_SIZE> -x <STARTING_EVENT>
-```
-where
-- `-e` (compulsory) is the same option given in *fast_resp.py* to specify the number of events to be analysed.
-- `-s` (compulsory) determines the size of the job, *i.e.* the number of events processed in each job.
-- `-x` (optional) gives the possibility to specify the starting event, if the number of events given is *less* than the total one.
-The number of parallel jobs then will be computed as `EVENT_NUMBER/JOB_SIZE`.
-Notice that when specifying the *output_folder_path* you don't have to insert the name of the folder, which is instead to be specified in the following argument (-d).
-
 There is also the possibility to run the simulation in backgroud, using the commad
 ```
 nohup bash launch_splitted_response.sh -i <INPUT_file_PATH> -f <OUTPUT_folder_PATH> -d <OUTPUT_folder_NAME> -e <MAX_event_NUMBER> -s <JOB_SIZE> -x <STARTING_EVENT> > out.log &
 ```
 To check how the job proceeds just look inside the *out.log* file.
 
-**ATTENTION:** in order to launch succesfully a production the input files have to be copied to a folder somewhere in the path `/storage/gpfs_data/neutrino/SAND-LAr/`, the shared folder accessible by HTCondor.
+**ATTENTION:** I stress again that in order to launch succesfully a production, input files and scripts have to be copied to a folder somewhere inside `/storage/gpfs_data/neutrino/SAND-LAr/`, the shared folder accessible by HTCondor.
 
 ### Input file
 
@@ -281,7 +266,7 @@ The output folder structure is the following:
 ```
 As already said, the *response_N.drdf* files are the output of the *N* submitted jobs. At this point, the `merge.py` script allows to merge them all into a single file *response.drdf*, which is more easy to analyse. 
 
-The script is executed by the bash script, when all jobs are completed.
+The script is executed by the shell script, when all jobs are completed.
 
 # Output analysis
 The analysis of *response.drdf* can be done using `fast_analysis.py`.
@@ -305,10 +290,3 @@ Another option of *fast_analysis.py* is the possibility to plot the distribution
         └─ ...     
 ```
 
-### Submission on Personal Computer
-In order to be able to submit this code on your PC, the following requirements are essential:
-- Linux or WSL 
-- Python3 
-- PyROOT module 
-- drdf module (go to the dedicated Section)
-- a *sensor.root* input file (an example set is already provided)
