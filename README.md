@@ -142,7 +142,7 @@ In case of parallel job submission to have information on a particular job we ha
 
 All this sequence of job submission and monitor is embedded inside *launch_splitted_response.sh*.
 
-For more information about HTCondor read [HTC - Job Submission](https://confluence.infn.it/display/TD/9+-+Job+submission) and the [HTC homepage](https://confluence.infn.it/display/TD/9+-+Job+submission).
+For more information about HTCondor read [HTC - Job Submission](https://confluence.infn.it/display/TD/9+-+Job+submission) and the [HTC homepage](https://research.cs.wisc.edu/htcondor/).
 
 ## Splitted fast response 
 
