@@ -117,7 +117,7 @@ The input file is obtained through the processing, with other sofwares, of the G
 
 A Virtual Machine offers the possibility to use a greater computation power wrt the one we can reach on our local device.
 ---------------------------------------------------------- 
-Through CNAF the user can get access to the INFN computing centre, exploiting the use of Grid technology. HTCondor is a specialized batch system for managing compute-intensive jobs. 
+Through CNAF the user can get access to the INFN computing centre, exploiting the use of Grid technology. It is in this constest that the creation of a fast detector response makes sense, since the term 'fast' derives from the possibility to run many simulations in parallel. HTCondor helps to accomplish this task, since it is a specialized batch system for managing compute-intensive jobs, providing a queuing mechanism, scheduling policy, priority scheme, and resource classifications. 
 
 ## HTCondor
 
@@ -172,11 +172,11 @@ These configuration parameters are written in the configuration file by *launch_
 
 ## Launching a production
 
-Once logged on neutrino-01 (same procedure applied in [Fast Response installation](#fast-response-installation)) you can launch the detector response through the shell script with the following command
+Once logged on neutrino-01 you can launch the detector response through the shell script with the following command
 ```
 bash launch_splitted_response.sh -c <RESPONSE_CONFIG>
 ```
-where *<RESPONSE_CONFIG>* is a *txt* file containing all the configuration parameters for starting the production.
+where *<RESPONSE_CONFIG>* is a *txt* file (different from the one used for the splitted fast response) containing all the configuration parameters for starting the production. 
 The file must be compiled by the user according to the followig structure:
 ```makefile
 inputFile = /path/to/input/file
@@ -211,6 +211,10 @@ nohup bash launch_splitted_response.sh -i <INPUT_file_PATH> -f <OUTPUT_folder_PA
 To check how the job proceeds just look inside the *out.log* file.
 
 **ATTENTION:** I stress again that in order to launch succesfully a production, input files and scripts have to be copied to a folder somewhere inside `/storage/gpfs_data/neutrino/SAND-LAr/`, the shared folder accessible by HTCondor.
+
+### Configuration file
+
+This repository contains a *configs* folder: it must be used to store the various configuration files. Each *config.txt* must be put inside a new folder with a specific name. The name of the folder will be the same of the production directory.
 
 ### Input file
 
