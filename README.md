@@ -6,7 +6,7 @@
   - [Required softwares](#required-softwares)
     - [The drdf module](#the-drdf-module)
   - [Fast Response installation](#fast-response-installation)
-- [Running response on local machine](#running-response-on-local-machine)
+- [Running fast_resp](#running-fast-resp)
 - [Submission on batch system](#submission-on-batch-system)
   - [HTCondor](#htcondor)
   - [Launching a production](#launching-a-production)
@@ -36,8 +36,6 @@ GRAIN is a vessel containing ~1 ton of liquid Argon (LAr) in which neutrinos can
 # Before starting
 
 It is possile to run the simulation of the detector response both on a local device or on a remote machine. 
-If your intent is the submission on a local machine you can skip the following sections, going directly to [Running response on local machine](#running-response-on-local-machine).
-
 However, to simulate efficiently a large number of events it is much more conveninet to rely, if possible, on distributed computing, which allows for a faster execution time exploiting the possibility of running multiple events at the same time. In particular I used the HTCondor batch system (more on this in section [HTCondor](#htcondor)).
 
 In order to be able to run the simulation of the detector response, few steps are required:
@@ -88,17 +86,18 @@ git@github.com:chiappo98/fast_detector_Response.git
 The fact that a the installation of the repository must be done inside a specific folder is due to the existence of a file system shared by the submit machine and the execute machine.
 
 At this point, the user may choose between two possibilities:
-- Execute *fast_resp.py* on neutrino-01 machine.
+- Execute *fast_resp.py* on neutrino-01.
 - Execute *splitted_resp.py*  submitting one or more jobs to HTCondor.
 
-In the first case the user may simply follow instructions provided in section [Running response on local machine](#running-response-on-local-machine). 
+In the first case the user may simply follow instructions provided in section [Running fast_resp](#running-fast-resp). 
 
-In order to submit the fast response to HTCondor (exploiting its adavntages), `splitted_fast_resp.py` and `launch_splitted_response.sh` are provided to the user. They represent a fast and easy way to submit jobs on the batch system and retrive information on their status, creating at the same time new folders to store the response output.
+In order to work with HTCondor (exploiting its adavntages) instead, `splitted_fast_resp.py` and `launch_splitted_response.sh` are provided to the user. They represent a fast and easy way to submit jobs on the batch system and retrive information on their status, creating at the same time new folders to store the response output.
 
+In both cases the output
 
-# Running response on local machine
+# Running fast_resp
 
-In order to run the detector response on local machine *fast_resp.py* must be used. It takes in input 3 parameters and has 4 additional options.
+In order to run the detector response on the neutrino-01 machine, *fast_resp.py* must be used. It takes in input 3 parameters and has 4 additional options.
 The submission comand therefore is
 ```
 python3 fast_resp.py <config_file> <input_ROOT_file> <output_drdf_file> -nc -e <event_number> -s <start_event> -i <idrun>
