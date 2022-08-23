@@ -27,9 +27,9 @@ SCRIPT_PATH=$(awk -F "ProductionPath =" '{if($2 != "")print $2;if($2 != "") exit
 SCRIPT_PATH=$(echo $SCRIPT_PATH | sed "s/\\r\\n//g")
 echo "ProductionPath: ${SCRIPT_PATH}"
 
-NEW_DIR=$(awk -F "new_Dir_Name =" '{if($2 != "")print $2;if($2 != "") exit;}' "${CONFIG}")
-NEW_DIR=$(echo $NEW_DIR | sed "s/\\r\\n//g")
-echo "new_Dir_Name: ${NEW_DIR}"
+#NEW_DIR=$(awk -F "new_Dir_Name =" '{if($2 != "")print $2;if($2 != "") exit;}' "${CONFIG}")
+#NEW_DIR=$(echo $NEW_DIR | sed "s/\\r\\n//g")
+#echo "new_Dir_Name: ${NEW_DIR}"
 
 EVENT_NUMBER=$(awk -F "eventNumber =" '{if($2 != "")print $2;if($2 != "") exit;}' "${CONFIG}")
 EVENT_NUMBER=$(echo $EVENT_NUMBER | sed "s/\\r\\n//g")
@@ -56,16 +56,8 @@ PLOT_CAMERAS=$(echo $PLOT_CAMERAS | sed "s/\\r\\n//g")
 echo "PlotCameras: ${PLOT_CAMERAS}"
 
 SELF=$(realpath $0)
-REALPATH=$(dirname $(realpath ${CONFIG})) #--relative-to $(dirname ${SELF})/configs))   #----->>>>need / <<<--------
-#SCRIPT_PATH=$REALPATH
-#SCRIPT_FOLDER=$REALPATH/${NEW_DIR}
-#OUTPUT_FOLDER=$SCRIPT_FOLDER/output
-#EXECUTABLE=$REALPATH/drdf.py
-#OUTPUT_FOLDER=$SCRIPT_FOLDER/log
-#TMP_LOG=${LOGS_FOLDER}/tmp_log
-#JOBNUMBER=$(( (${EVENT_NUMBER} + ${JOB_SIZE} - 1) / ${JOB_SIZE} ))
-#-----------------------------------------------------------------------------------------------------------------------------------------
-SCRIPT_FOLDER=$SCRIPT_PATH/${NEW_DIR}
+REALPATH=$(dirname $(realpath ${CONFIG} --relative-to $(dirname ${SELF})/configs))
+SCRIPT_FOLDER=$SCRIPT_PATH/${REALPATH}
 #SCRIPT_PATH=/storage/gpfs_data/neutrino/SAND-LAr/SAND-LAr-GRAIN-CALORIMETRY/scratch/fastCalo_submission/
 OUTPUT_FOLDER=${SCRIPT_FOLDER}/output
 #CONFIG=/storage/gpfs_data/neutrino/SAND-LAr/SAND-LAr-GRAIN-CALORIMETRY/scratch/fastCalo_submission/config.xml
