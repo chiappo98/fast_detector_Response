@@ -196,8 +196,6 @@ The input file is obtained through the processing, with other sofwares, of the G
 
 # Submission on batch system
 
-A Virtual Machine offers the possibility to use a greater computation power wrt the one we can reach on our local device.
----------------------------------------------------------- 
 Through CNAF the user can get access to the INFN computing centre, exploiting the use of Grid technology. It is in this constest that the creation of a fast detector response makes sense, since the term 'fast' derives from the possibility to run many simulations in parallel. HTCondor helps to accomplish this task, since it is a specialized batch system for managing compute-intensive jobs, providing a queuing mechanism, scheduling policy, priority scheme, and resource classifications. 
 
 ## HTCondor
