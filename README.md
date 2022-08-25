@@ -6,6 +6,7 @@
   - [Required softwares](#required-softwares)
     - [The drdf module](#the-drdf-module)
   - [Fast Response installation](#fast-response-installation)
+  - [Download infut files](#download-input-files)
 - [Running fast_resp](#running-fast-resp)
 - [Submission on batch system](#submission-on-batch-system)
   - [HTCondor](#htcondor)
@@ -94,6 +95,44 @@ In the first case the user may simply follow instructions provided in section [R
 In order to work with HTCondor (exploiting its adavntages) instead, `splitted_fast_resp.py` and `launch_splitted_response.sh` are provided to the user. They represent a fast and easy way to submit jobs on the batch system and retrive information on their status, creating at the same time new folders to store the response output.
 
 In both cases the output of the detector response will be the same, even if the two scripts are implemented in different ways.
+
+## Download infut files
+
+I provide to the user some files which can be used as input files for the detector response simulation. They are called *sensors.root* and contains information about the photons generated from a neutrino interaction which reach the SiPMs.
+In particular I provide files containing: 
+* 1 event
+* 3 events
+* 10 events
+* 100 events
+With 'event' I mean a single neutrino interaction happened inside the GRAIN volume, which gives rise to scintillation photons from charged particles propagation. 
+This means that analysing the second file the user will simulate three different neutrino events, with the interaction vertex located randomly inside the LAr volume.
+
+It's important to konw how many events a *sensors.root* file contains, in order to set the correct parameters for the simulation.
+
+Since they are quite heavy files, they are stored on my personal Google Drive. I shared them so that using the commands below everyone will be able to download them directly into the preferre folder on neutrino-01.
+
+So, first of all, create a dedicated folder for the file, if possible in the same location of the cloned repository. I suggest to create an `input_file` directory with dedicated folders inside
+```
+mkdir /storage/gpfs_data/neutrino/SAND-LAr/../input_file
+mkdir /storage/gpfs_data/neutrino/SAND-LAr/../input_file/3_events
+```
+At this point, navigate to the *N_events* folder, and use the following commands:
+* 1 event (62 MB)
+```
+wget --no-check-certificate 'https://docs.google.com/uc?export=download&id=1mhChJm1__PEa0DA_aEdEBrrcdMYDSWjK' -O sensors.root
+```
+* 3 events (249 MB)
+```
+wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1lganVEn5Y7uXqpNkoSPi2tcJ88k84JsD' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1lganVEn5Y7uXqpNkoSPi2tcJ88k84JsD" -O sensors.root && rm -rf /tmp/cookies.txt
+```
+* 10 events (509 MB)
+```
+wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1KhQUk276fSw0U2uzAGRSEt_CuF6kdPD8' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1KhQUk276fSw0U2uzAGRSEt_CuF6kdPD8" -O sensors.root && rm -rf /tmp/cookies.txt
+```
+* 100 events (4035 MB)
+```
+wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1RSMwA6xBTjngQktb5yZ-7d5VBVouJboU' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1RSMwA6xBTjngQktb5yZ-7d5VBVouJboU" -O sensors.root && rm -rf /tmp/cookies.txt
+```
 
 # Running fast_resp
 
