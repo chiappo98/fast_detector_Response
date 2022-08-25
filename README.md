@@ -44,7 +44,7 @@ SAND in turn has three modules enclosed in a superconducting magnet: a Straw Tub
 </p>
 
 <p align = "center">
-The SAND detector. On the left image you can see the GRAIN module surrounded by the ECAL.
+The SAND detector. On the left you can see the GRAIN module surrounded by the ECAL.
 </p>
 
 The GRAIN (GRanular Argon fot Interctions of Neutrinos) module, part of the SAND (System for on-Axis Neutrino Detection) detector of the DUNE experiment, a long-baseline experiment for the detection of artificial and cosmic neutrinos.
