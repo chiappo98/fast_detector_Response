@@ -161,6 +161,13 @@ wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download
 wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1RSMwA6xBTjngQktb5yZ-7d5VBVouJboU' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1RSMwA6xBTjngQktb5yZ-7d5VBVouJboU" -O sensors.root && rm -rf /tmp/cookies.txt
 ```
 
+There is one last file to download: *1000_numu_in_GRAIN.edep_sim.root*. It is the
+
+
+```
+wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1P21O8OJ-OuY4Cc_FH7n7S7VILYBPA2ZP' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1P21O8OJ-OuY4Cc_FH7n7S7VILYBPA2ZP" -O 1000_numu_in_GRAIN.edep_sim.root && rm -rf /tmp/cookies.txt
+```
+
 # Running fast_resp
 
 In order to run the detector response on the neutrino-01 machine, *fast_resp.py* must be used. It takes in input 3 parameters and has 4 additional options.
