@@ -165,12 +165,6 @@ echo "error                   = "$LOGS_FOLDER/err/job_\$\(Process\).err"" >> "$S
 #echo "when_to_transfer_output = ON_EXIT" >> "$SCRIPT_FOLDER/splitted_fast_resp.sub"
 echo "queue ${JOBNUMBER}" >> "$SCRIPT_FOLDER/splitted_fast_resp.sub"
 
-
-#> $LOGS_FOLDER/splitted_fast_resp.out
-#> $LOGS_FOLDER/splitted_fast_resp.err
-#> $LOGS_FOLDER/time.log
-#check_errors
-
 start=`date +%s`
 echo "Submitting job on HTC"
 condor_submit -name sn-02.cr.cnaf.infn.it -spool "${SCRIPT_FOLDER}/splitted_fast_resp.sub" > $LOGS_FOLDER/tmp_log
