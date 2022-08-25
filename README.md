@@ -6,7 +6,7 @@
   - [Required softwares](#required-softwares)
     - [The drdf module](#the-drdf-module)
   - [Fast Response installation](#fast-response-installation)
-  - [Download infut files](#download-input-files)
+  - [Download input files](#download-input-files)
 - [Running fast_resp](#running-fast-resp)
 - [Submission on batch system](#submission-on-batch-system)
   - [HTCondor](#htcondor)
@@ -27,28 +27,36 @@ The program gives as output the distribution of photons on each camera, in a drd
 The DUNE experiment is a long-baseline neutrino experiment which is under construction in the US between the Fermilab, where the neutrino beam will be generated, and hte Stanford Underground Research Facility in South Dakota.
 The experiment will study neutrino oscillations trying to measure the $\delta_{cp}$ phase of the PMNS matrix and the neutrino mass ordering. It will also be able to detect cosmic neutrinos, providing important information about cosmic ray sources, useful for multimessenger astrophysics.
 
-<center>
+<p align = "center">
 <img src="/images/dune.png" width="500" class="center"/>
-</center>  
+</p>
 
 DUNE is composed by a Near Detector (ND) and a Far Detector (FD), consisting of a large TPC filled with liquid Argon. The ND has the scope of monitoring the neutrino beam just after its generation and is composed of three sub-detectors: GasAr-TPC, , and the SAND detector.
 
-<center>
+<p align = "center">
 <img src="/images/nearDetector.png" width="400" class="center"/>
-</center>
+</p>
 
 SAND in turn has three modules enclosed in a superconducting magnet: a Straw Tube Tracker, an electromagnetic calorimeter and GRAIN.
 
-<center>
-<img src="/images/sand.png" width="400" class="center"/>
-</center>
+<p align = "center">
+<img src="/images/sand.png" width="500" class="center"/>
+</p>
+
+<p align = "center">
+The SAND detector. On the left image you can see the GRAIN module surrounded by the ECAL.
+</p>
 
 The GRAIN (GRanular Argon fot Interctions of Neutrinos) module, part of the SAND (System for on-Axis Neutrino Detection) detector of the DUNE experiment, a long-baseline experiment for the detection of artificial and cosmic neutrinos.
 GRAIN is a vessel containing ~1 ton of liquid Argon (LAr) in which neutrinos can interact. The charged particles generated in these interactions move inside the LAr emmitting scintillation light, which is detected by SiPMs placed on the walls of the vessel. As already explained, the SiPMs are arranged in 76 cameras, which consist in 32x32 matrices.
 
-<center>
+<p align = "center">
 <img src="/images/grainCam.png" width="300" class="center"/>
-</center>
+</p>
+
+<p align = "center">
+View of the GRAIN vessel, with SiPM cameras on its walls.
+</p>
 
 # Before starting
 
@@ -116,7 +124,7 @@ In order to work with HTCondor (exploiting its adavntages) instead, `splitted_fa
 
 In both cases the output of the detector response will be the same, even if the two scripts are implemented in different ways.
 
-## Download infut files
+## Download input files
 
 I provide to the user some files which can be used as input files for the detector response simulation. They are called *sensors.root* and contains information about the photons generated from a neutrino interaction which reach the SiPMs.
 In particular I provide files containing: 
