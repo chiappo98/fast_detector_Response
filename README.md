@@ -18,20 +18,20 @@
 
 # Fast detector response
 
-The aim of this program is to simulate the Readout system of a detector composed by Silicon Photomultiplier (SiPM) sensors. They are arranged in 76 matrices (called cameras) of 32x32 sensors each, covering the internal walls of a vessel containing a scintillating material. Their scope is to detect the scintillation light produced by a charged particle moving inside the scintillating material. Using this program you can perform a calorimetric measurement, obtaining the energy of the incoming particle.
+The aim of this program is to simulate the readout system of the GRAIN detector, a vessel filled with liquid Argon and surrounded by Silicon Photomultiplier (SiPM) sensors, whose scope is the measurement of neutrino energy. SiPMs are arranged in 76 matrices (called cameras) of 32x32 sensors each, covering the internal walls of a vessel containing a scintillating material. Their scope is to detect the scintillation light produced by a charged particles (generated from neutrino interactions). 
 
-The program gives as output the distribution of photons on each camera, in a drdf file, which is a custom image format (more on this later).
+The program gives in output the distribution of photons on each camera, and is able to compare the total number of detected photons with the energy deposited by charged particles.
 
 # The physics case
 
-The DUNE experiment is a long-baseline neutrino experiment which is under construction in the US between the Fermilab, where the neutrino beam will be generated, and hte Stanford Underground Research Facility in South Dakota.
-The experiment will study neutrino oscillations trying to measure the $\delta_{cp}$ phase of the PMNS matrix and the neutrino mass ordering. It will also be able to detect cosmic neutrinos, providing important information about cosmic ray sources, useful for multimessenger astrophysics.
+The DUNE experiment is a long-baseline neutrino experiment which is under construction in the US between Fermilab, where the neutrino beam will be generated, and the Stanford Underground Research Facility in South Dakota.
+The experiment will study neutrino oscillations trying to measure the $\delta_{cp}$ phase of the PMNS matrix and will try to discriminate neutrino mass ordering. It will also be able to detect cosmic neutrinos, providing important information about cosmic ray sources, useful for multimessenger astrophysics.
 
 <p align = "center">
 <img src="/images/dune.png" width="500" class="center"/>
 </p>
 
-DUNE is composed by a Near Detector (ND) and a Far Detector (FD), consisting of a large TPC filled with liquid Argon. The ND has the scope of monitoring the neutrino beam just after its generation and is composed of three sub-detectors: GasAr-TPC, , and the SAND detector.
+DUNE is composed by a Near Detector (ND) and a Far Detector (FD), consisting of a large TPC filled with liquid Argon. The ND has the scope of monitoring the neutrino beam just after its generation and is composed of three sub-detectors: GasAr-TPC, ---------,and the SAND detector.
 
 <p align = "center">
 <img src="/images/nearDetector.png" width="400" class="center"/>
