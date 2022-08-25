@@ -45,6 +45,7 @@ def assign_channel(photons, geom):          #arguments: sensor_data, CONFIG
     xside = shape[0] * (geom['cellsize'] + 2 * geom['celledge'])/ 2         #find coordinates of matrix edge 
     yside = shape[1] * (geom['cellsize'] + 2 * geom['celledge'])/ 2         #wrt the centre of the sensor
     
+    # ---- verify photons hit active areas and apply cuts ----
     z_thres = np.where(np.isclose(photons[:,4], geom['zplane']))
     active_areaX = np.where((np.abs(photons[:,2][z_thres])>=0) & (np.abs(photons[:,2][z_thres]) <= xside))
     cut1 = np.intersect1d(z_thres,active_areaX)
@@ -66,43 +67,43 @@ def assign_channel(photons, geom):          #arguments: sensor_data, CONFIG
     ch = cell_y * shape[0] + cell_x         #each channel identified by a SINGLE NUMBER from 0 to 1023
     return time, ch
 
-def count_photons(time, ch, config ):                                            #argument: time, photons (a single array)
+def count_photons(time, ch, config ):                                            #argument: time, photons (a single array), config
     """considering pde only for sipm response, for debugging/fast execution"""
     phlist = []
     for c in range(1024):
         ph = np.where(ch==c)               #find all photons that reached channel "c"        
-        if (ph[0].size!=0):                  #---->>>correct??
+        if (ph[0].size!=0):                  
             tmin = np.amin(time[ph])            
-            time_cut = np.where(time[ph]<tmin+config['integrTime'])            #find all photons of the channel which arrived within 200ns
+            time_cut = np.where(time[ph]<tmin+config['integrTime'])            #find all photons of the channel which arrived within integrationTime (e.g. 500ns)
             t_num = np.count_nonzero(time[ph]<tmin+config['integrTime'])        
             pde_ph = np.count_nonzero(np.random.uniform(0,1,t_num) < config['pde127nm'])      #apply the pde over the time-allowed photons
             cross_ph = np.count_nonzero(np.random.uniform(0,1,pde_ph) < config['pcross'])     #apply cross-talk over the pde-allowed photons
-            nph = pde_ph + cross_ph + sum(np.random.normal(0,config['phgain'],pde_ph+cross_ph))    #count the resulting number of photons + gain
+            nph = pde_ph + cross_ph + sum(np.random.normal(0,config['phgain'],pde_ph+cross_ph))    #count the resulting number of photons + gain over photon amp.
            
-            phtimes_pde = time[time_cut[0:pde_ph]]                               #extract from time array arrival times of resulting number of photons 
-            phtimes_cross = time[time_cut[0:cross_ph]]            #add time of photons added with cross-talk
-            phtimes = np.concatenate((phtimes_pde,phtimes_cross))                     #modify............
+            phtimes_pde = time[time_cut[0:pde_ph]]                          #extract from time array arrival times of resulting number of photons 
+            phtimes_cross = time[time_cut[0:cross_ph]]                      #add time of photons added with cross-talk
+            phtimes = np.concatenate((phtimes_pde,phtimes_cross))                     
             if nph < 1:          #can be seen as threshold 
                 count_result = (0, np.nan)
             else:
-                count_result = (nph, tmin)                           #time of first photon (amin returns minimum value of the array)
+                count_result = (nph, tmin)                           
         else:
             count_result = (0, np.nan)
         phlist.append(count_result)                                   
     return phlist
 
-def count_photons_no_cut(photons, config ):                                            #argument: ph. channel, energy, time 
+def count_photons_no_cut(photons, config ):                                           
     """considers simply the total number of photons reaching each camera"""
     phlist = []
     for c in range(1024):
         ph = np.where(ch==c)               #find all photons that reached channel "c"        
-        if (ph[0].size!=0):                  #---->>>correct??
-            tmin = np.amin(time[ph])            
-            nph = time[ph].size               #modify............
+        if (ph[0].size!=0):                  
+            tmin = np.amin(time[ph])            #arrival time of first photon 
+            nph = time[ph].size              
             if nph < 1:          #can be seen as threshold 
                 count_result = (0, np.nan)
             else:
-                count_result = (nph, tmin)                           #time of first photon (amin returns minimum value of the array)
+                count_result = (nph, tmin)                     
         else:
             count_result = (0, np.nan)
         phlist.append(count_result)         
@@ -115,27 +116,17 @@ def ph_num(phlist):
     return sum
             
 def main_evn(inFile,klist,evn,drdffile):
-         #tevent_start = time.perf_counter()
          treeEv = inFile.Get(klist.Last().GetName())     #opening tree of first sensor to get idEvent
-         treeEv.GetEntry(evn)                        #select event
+         treeEv.GetEntry(evn)                           #select event
          idEvent = treeEv.idEvent                    
          drdffile.start_event(idEvent)
-         #t0 = time.perf_counter()
-         #print("processing event n. ", idEvent)
          tot_ph = np.empty(0)
          for key in klist:                           #loop over cameras (the keys of the list)
              if key.GetName() != 'commit_hash':
-                 #t1 = time.perf_counter()
                  sensor_data, sensor_name= load_sensor_data(inFile, key, evn)
-                 #t2 = time.perf_counter()
-                 #print("load_sensor_data={0}".format(t2-t1))
-                 t_arr, sensor_data = assign_channel(sensor_data, CONFIG)           #output energy+time
-                 #t3 = time.perf_counter()
-                 #print("assign_channel={0}".format(t3-t2))
+                 t_arr, sensor_data = assign_channel(sensor_data, CONFIG)           
                  if (args.nocut):
-                     detected_ph_time = count_photons_no_cut(t_arr, sensor_data, CONFIG)  
-                     #t4 = time.perf_counter()
-                     #print("cont_photons={0}".format(t4-t3))
+                     detected_ph_time = count_photons_no_cut(t_arr, sensor_data, CONFIG)            #list of : nph + timeof first arrival
                      n_ph = ph_num(detected_ph_time)
                      tot_ph = np.append(tot_ph,n_ph)
                      imgshape = CONFIG['matrix']
@@ -143,15 +134,13 @@ def main_evn(inFile,klist,evn,drdffile):
                      image = drdf.Image(img)
                      drdffile.add_image(sensor_name, image)
                  else: 
-                     detected_ph_time = count_photons(t_arr, sensor_data, CONFIG)       #list of : nph + timeof first arrival
-                     #t4 = time.perf_counter()
+                     detected_ph_time = count_photons(t_arr, sensor_data, CONFIG)       
                      n_ph = ph_num(detected_ph_time)
                      tot_ph = np.append(tot_ph,n_ph)
                      imgshape = CONFIG['matrix']
-                     img = np.asarray(detected_ph_time).reshape(imgshape[0], imgshape[1], 2).astype('float32')   #reshape the list of ph 
+                     img = np.asarray(detected_ph_time).reshape(imgshape[0], imgshape[1], 2).astype('float32')    
                      image = drdf.Image(img)
                      drdffile.add_image(sensor_name, image)
-         #print("execution time for event {1}: {0:.5f} s".format(t0 - tevent_start , evn))
          print("number of ph=",np.sum(tot_ph))
          return drdffile        
     
@@ -187,7 +176,6 @@ if __name__ == '__main__':
         drdffile.start_run(runid)
         print('run id: ', runid)
     drdffile.set_georef("DUMMY")
-#---------------------------------------------------------------------------------------------------------
         
     inFile = ROOT.TFile.Open(fname, "READ")         #file sensors.root
     klist = inFile.GetListOfKeys()
