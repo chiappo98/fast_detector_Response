@@ -27,10 +27,6 @@ PROD_PATH=$(awk -F "ProductionPath =" '{if($2 != "")print $2;if($2 != "") exit;}
 PROD_PATH=$(echo $PROD_PATH | sed "s/\\r\\n//g")
 echo "ProductionPath: ${PROD_PATH}"
 
-#NEW_DIR=$(awk -F "new_Dir_Name =" '{if($2 != "")print $2;if($2 != "") exit;}' "${CONFIG}")
-#NEW_DIR=$(echo $NEW_DIR | sed "s/\\r\\n//g")
-#echo "new_Dir_Name: ${NEW_DIR}"
-
 EVENT_NUMBER=$(awk -F "eventNumber =" '{if($2 != "")print $2;if($2 != "") exit;}' "${CONFIG}")
 EVENT_NUMBER=$(echo $EVENT_NUMBER | sed "s/\\r\\n//g")
 echo "Event number: ${EVENT_NUMBER}"
@@ -47,6 +43,10 @@ RESPONSE_CONFIG=$(awk -F "responseConfig =" '{if($2 != "")print $2;if($2 != "") 
 RESPONSE_CONFIG=$(echo $RESPONSE_CONFIG| sed "s/\\r\\n//g")
 echo "Response config:${RESPONSE_CONFIG}"
 
+EDEPFILE=$(awk -F "edepFile =" '{if($2 != "")print $2;if($2 != "") exit;}' "${CONFIG}")
+EDEPFILE=$(echo $EDEPFILE | sed "s/\\r\\n//g")
+echo "edep file: ${EDEPFILE}"
+
 FAST_ANALYSIS=$(awk -F "FastAnalysis =" '{if($2 != "")print $2;if($2 != "") exit;}' "${CONFIG}")
 FAST_ANALYSIS=$(echo $FAST_ANALYSIS | sed "s/\\r\\n//g")
 echo "FastAnalysis: ${FAST_ANALYSIS}"
@@ -59,9 +59,7 @@ SELF=$(realpath $0)
 REALPATH=$(dirname $(realpath ${CONFIG} --relative-to $(dirname ${SELF})/configs))
 SCRIPT_FOLDER=$PROD_PATH/${REALPATH}
 SCRIPT_PATH=$(dirname ${SELF})
-#SCRIPT_PATH=/storage/gpfs_data/neutrino/SAND-LAr/SAND-LAr-GRAIN-CALORIMETRY/scratch/fastCalo_submission/
 OUTPUT_FOLDER=${SCRIPT_FOLDER}/output
-#CONFIG=/storage/gpfs_data/neutrino/SAND-LAr/SAND-LAr-GRAIN-CALORIMETRY/scratch/fastCalo_submission/config.xml
 EXECUTABLE=${SCRIPT_PATH}/drdf.py
 LOGS_FOLDER=${SCRIPT_FOLDER}/log
 TMP_LOG=${LOGS_FOLDER}/tmp_log

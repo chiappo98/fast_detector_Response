@@ -198,7 +198,7 @@ if [[ $FAST_ANALYSIS = "yes" ]]; then
   echo "Running fast_analysis.py"
   echo "Setting analysis directory at ${SCRIPT_FOLDER}/output_analysis"
   mkdir -p ${SCRIPT_FOLDER}/output_analysis
-  python3 ${SCRIPT_PATH}/fast_analysis.py ${OUTPUT_FOLDER}/response.drdf ${INPUTFILE} ${SCRIPT_FOLDER}/output_analysis ${EVENT_NUMBER} ${STARTING_EVENT} ${PLOT_CAMERAS}
+  python3 ${SCRIPT_PATH}/fast_analysis.py ${OUTPUT_FOLDER}/response.drdf ${EDEPFILE} ${SCRIPT_FOLDER}/output_analysis ${EVENT_NUMBER} ${STARTING_EVENT} ${PLOT_CAMERAS}
   check_errors
   echo "Anlaysis completed"
 fi  
