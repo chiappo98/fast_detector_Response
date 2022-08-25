@@ -221,7 +221,6 @@ The file must be compiled by the user according to the followig structure:
 ```makefile
 inputFile = /path/to/input/file
 ProductionFolder = /path/to/output/folder
-new_Dir_Name = <name>
 eventNumber = <number>
 jobSize = <number>
 startingEvent = <number>
@@ -253,7 +252,7 @@ To check how the job proceeds just look inside the *out.log* file.
 
 ### Configuration file
 
-This repository contains a *configs* folder: it must be used to store the various configuration files. Each *config.txt* must be put inside a new folder with a specific name. That name will be also the same of the production directory which will be created to store the output of the simulation.
+This repository contains a *configs* folder: it must be used to store the various configuration files. Each *config.txt* must be put inside a new folder with a specific name. That name will be also the name of the production directory which will be created to store the output of the simulation.
 
 ### Input file
 
