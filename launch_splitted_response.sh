@@ -15,6 +15,8 @@ if [ ! -f $CONFIG ]; then
   exit 2
 fi
 
+source load_config.sh -c $CONFIG
+
 function setup_prod_dir() {
   mkdir -p $SCRIPT_FOLDER
   mkdir -p $LOGS_FOLDER
@@ -104,8 +106,8 @@ function check_condor() {
 }
 
 echo "Running splitted_fast_resp over ${EVENT_NUMBER} events, splitted in ${JOBNUMBER} jobs of size ${JOB_SIZE}"
-echo "Starting event: ${START_EVN}"
-echo "Input file : ${INPUT}"
+echo "Starting event: ${STARTING_EVENT}"
+echo "Input file : ${INPUTFILE}"
 echo "Setting up production directory at ${SCRIPT_FOLDER}"
 setup_prod_dir
 check_errors
@@ -196,7 +198,7 @@ if [[ $FAST_ANALYSIS = "yes" ]]; then
   echo "Running fast_analysis.py"
   echo "Setting analysis directory at ${SCRIPT_FOLDER}/output_analysis"
   mkdir -p ${SCRIPT_FOLDER}/output_analysis
-  python3 ${SCRIPT_PATH}/fast_analysis.py ${OUTPUT_FOLDER}/response_cut.drdf ${INPUTFILE} ${SCRIPT_FOLDER}/output_analysis ${EVENT_NUMBER} ${STARTING_EVENT} ${PLOT_CAMERAS}
+  python3 ${SCRIPT_PATH}/fast_analysis.py ${OUTPUT_FOLDER}/response.drdf ${INPUTFILE} ${SCRIPT_FOLDER}/output_analysis ${EVENT_NUMBER} ${STARTING_EVENT} ${PLOT_CAMERAS}
   check_errors
   echo "Anlaysis completed"
 fi  

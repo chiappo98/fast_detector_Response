@@ -23,9 +23,9 @@ INPUTFILE=$(awk -F "inputFile =" '{if($2 != "")print $2;if($2 != "") exit;}' "${
 INPUTFILE=$(echo $INPUTFILE | sed "s/\\r\\n//g")
 echo "Input file: ${INPUTFILE}"
 
-SCRIPT_PATH=$(awk -F "ProductionPath =" '{if($2 != "")print $2;if($2 != "") exit;}' "${CONFIG}")
-SCRIPT_PATH=$(echo $SCRIPT_PATH | sed "s/\\r\\n//g")
-echo "ProductionPath: ${SCRIPT_PATH}"
+PROD_PATH=$(awk -F "ProductionPath =" '{if($2 != "")print $2;if($2 != "") exit;}' "${CONFIG}")
+PROD_PATH=$(echo $PROD_PATH | sed "s/\\r\\n//g")
+echo "ProductionPath: ${PROD_PATH}"
 
 #NEW_DIR=$(awk -F "new_Dir_Name =" '{if($2 != "")print $2;if($2 != "") exit;}' "${CONFIG}")
 #NEW_DIR=$(echo $NEW_DIR | sed "s/\\r\\n//g")
@@ -36,7 +36,7 @@ EVENT_NUMBER=$(echo $EVENT_NUMBER | sed "s/\\r\\n//g")
 echo "Event number: ${EVENT_NUMBER}"
 
 JOB_SIZE=$(awk -F "jobSize =" '{if($2 != "")print $2;if($2 != "") exit;}' "${CONFIG}")
-#JOB_SIZE=$(echo $JOB_SIZE | sed "s/\\r\\n//g")
+JOB_SIZE=$(echo $JOB_SIZE | sed "s/\\r\\n//g")
 echo "Job size: ${JOB_SIZE}"
 
 STARTING_EVENT=$(awk -F "startingEvent =" '{if($2 != "")print $2;if($2 != "") exit;}' "${CONFIG}")
@@ -57,7 +57,8 @@ echo "PlotCameras: ${PLOT_CAMERAS}"
 
 SELF=$(realpath $0)
 REALPATH=$(dirname $(realpath ${CONFIG} --relative-to $(dirname ${SELF})/configs))
-SCRIPT_FOLDER=$SCRIPT_PATH/${REALPATH}
+SCRIPT_FOLDER=$PROD_PATH/${REALPATH}
+SCRIPT_PATH=$(dirname ${SELF})
 #SCRIPT_PATH=/storage/gpfs_data/neutrino/SAND-LAr/SAND-LAr-GRAIN-CALORIMETRY/scratch/fastCalo_submission/
 OUTPUT_FOLDER=${SCRIPT_FOLDER}/output
 #CONFIG=/storage/gpfs_data/neutrino/SAND-LAr/SAND-LAr-GRAIN-CALORIMETRY/scratch/fastCalo_submission/config.xml

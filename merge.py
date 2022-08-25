@@ -6,7 +6,7 @@ import numpy as np
 #/storage/gpfs_data/neutrino/SAND-LAr/SAND-LAr-GRAIN-CALORIMETRY/scratch/fastCalo_submission/parallel_200_400reduced/output/
 #drdf_path = '/storage/gpfs_data/neutrino/SAND-LAr/SAND-LAr-GRAIN-CALORIMETRY/scratch/fastCalo_submission/parallel_500_510edep/output'
 drdf_path = sys.argv[1]
-evn_num = sys.srgv[2]
+evn_num = sys.argv[2]
 
 mergefile = drdf.DRDF()
 mergefile.start_run(uuid.uuid1())
