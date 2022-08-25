@@ -50,7 +50,10 @@ In order submit the detector response on HTCondor, an account to access the subm
 
 [Here](https://confluence.infn.it/pages/viewpage.action?pageId=40665299) you can find more information on INFN-CNAF Tier-1.
 
+### WARNING
 In the following sections I will always refer to job submission on the *neutrino-01* machine, which adopts the HTCondor batch system. However, users can obviously use different submit machines. Furthermore, if the batch system is different form HTCondor, the *launch_splitted_response.sh* shell script has to be modified to include the new submission command.
+
+In *launch_splitted_response.sh*, lines 144-148 and 154, the user who it's not logged on neutrino-01 must check if the paths are sill valid or need to be changed.
 
 ## Required softwares
 
