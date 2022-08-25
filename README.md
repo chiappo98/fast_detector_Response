@@ -106,11 +106,9 @@ this should put you in the folder
 /home/NEUTRINO/<HTC_user>
 ```
 from here, clone this repository in the preferred location **inside** `/storage/gpfs_data/neutrino/SAND-LAr/`
-```
-git@github.com:chiappo98/fast_detector_Response.git  
+```  
 git clone https://github.com/chiappo98/fast_detector_Response.git
 ```
---------------------->>>>>>>>>>>to verify
 
 The fact that a the installation of the repository must be done inside a specific folder is due to the existence of a file system shared by the submit machine and the execute machine.
 
