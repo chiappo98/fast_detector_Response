@@ -81,6 +81,7 @@ this should put you in the folder
 from here, clone this repository in the preferred location **inside** `/storage/gpfs_data/neutrino/SAND-LAr/`
 ```
 git@github.com:chiappo98/fast_detector_Response.git  
+git clone https://github.com/chiappo98/fast_detector_Response.git
 ```
 --------------------->>>>>>>>>>>to verify
 
