@@ -104,6 +104,7 @@ In particular I provide files containing:
 * 3 events
 * 10 events
 * 100 events
+
 With 'event' I mean a single neutrino interaction happened inside the GRAIN volume, which gives rise to scintillation photons from charged particles propagation. 
 This means that analysing the second file the user will simulate three different neutrino events, with the interaction vertex located randomly inside the LAr volume.
 
