@@ -161,9 +161,17 @@ wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download
 wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1RSMwA6xBTjngQktb5yZ-7d5VBVouJboU' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1RSMwA6xBTjngQktb5yZ-7d5VBVouJboU" -O sensors.root && rm -rf /tmp/cookies.txt
 ```
 
-There is one last file to download: *1000_numu_in_GRAIN.edep_sim.root*. It is the
+There is one last file to download: *1000_numu_in_GRAIN.edep_sim.root*. It contains the result of the particles interaction simulation inside GRAIN. This is the file from which the *sensors.root* files provided above are created (with dedicated software).
 
+[Edepsim](https://github.com/ClarkMcGrew/edep-sim) output format can be found [here](https://indico.cern.ch/event/687511/contributions/2822503/attachments/1574001/2484800/Edep-sim_output.pdf#search=edep-sim%20output). 
+Among all the information stored in this file, we are interested in the energy deposit. During the [Output analysis](#output-analysis) in fact we compare the number of detected photons wrt the energy deposited by charged particles.
 
+As done before, I suggest to create a dedicated folder 
+```
+mkdir /storage/gpfs_data/neutrino/SAND-LAr/../input_file/edepsimFile
+```
+
+The download is started with the following command
 ```
 wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1P21O8OJ-OuY4Cc_FH7n7S7VILYBPA2ZP' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1P21O8OJ-OuY4Cc_FH7n7S7VILYBPA2ZP" -O 1000_numu_in_GRAIN.edep_sim.root && rm -rf /tmp/cookies.txt
 ```
@@ -258,6 +266,7 @@ eventNumber = <number>
 jobSize = <number>
 startingEvent = <number>
 responseConfig = /path/to/config/xml/file
+edepFile = /path/to/config/edepsim/file
 FastAnalysis = <yes/no>
 PlotCameras = <yes/no>
 ```
@@ -267,6 +276,7 @@ PlotCameras = <yes/no>
 * `jobSize` is used to set the number of events to simulate in every job (and the number of submitted jobs as a consequence).
 * `startingEvent` is used to choose the starting entry of the file.
 * `responseConfig` is used to choose the configuration file for the detector response.
+* `edepFile` must be an absolute path to *1000_numu_in_GRAIN.edep_sim.root*.
 * `FastAnalysis` is used to analyse the detector response output. More on this below.
 * `PlotCameras` is used to plot the photon distribution of each camera.
 
@@ -339,13 +349,15 @@ The output folder structure is the following:
         ├─ response_1.drdf        # pixel signal output in drdf format of event 1
         └─ ... 
 ```
-As already said, the *response_N.drdf* files are the output of the *N* submitted jobs. At this point, the `merge.py` script allows to merge them all into a single file *response.drdf*, which is more easy to analyse. 
+As already said, the *response_N.drdf* files are the output of the *N* submitted jobs. At this point, the `merge.py` script allows to unify them into a single *response.drdf* file, which is more easy to analyse. 
 
 The script is executed by the shell script, when all jobs are completed.
 
 # Output analysis
 The analysis of *response.drdf* can be done using `fast_analysis.py`.
-This program is able to read the drdf file showing the results of the simulations. Since the *sensors.root* file contains also the energy of the incoming photons we can use this information to obtain a calibration coefficient. In particular we plot the energy transported by photons wrt the number of photons detected by SiPMs. This allows to compute the coefficient form which, measuring the number of photons detected we can obtain the energy of the scintillation photons (proportional to the energy of the charged particles generated from neutrino interactions).
+This program is able to read the drdf file showing the results of the simulations. In particular we plot the energy deposited by charged particles wrt the number of photons detected by SiPMs. This allows to compute a calibration coefficient form which, measuring the number of photons detected we can obtain the energy deposited inside the LAr volume.
+
+The energy deposit is read from *1000_numu_in_GRAIN.edep_sim.root*, paying attention to select the same events that has been simulated in the detector response.
 
 <p align = "center">
 <img src="/images/cam70.png" width="300" class="center"/>
@@ -356,10 +368,12 @@ Example of a SiPM camera plotted from the drdf file. The amplitude of each pixel
 </p> 
 
 Another option of *fast_analysis.py* is the possibility to plot the distribution of photons on each camera, for all the simulated events. This is only an option, disabled as default, since it takes a large amount of time. However, once enabled, the images of the 76 cameras of the *N*-th event will be saved in the *event_N* folder, inside *camera_folder*.
+
+This is the structure of the *output_analysis* folder, created inside the production directory.
 ```bash
 - output_analysis                           
-    ├─ LOGenergyVamplitude.png              # energy vs amplitude in logaritmic scale
-    ├─ energyVamplitude.png                 # energy vs amplitude
+    ├─ amplitudeVenergy.png              # amplitude vs energy 
+    ├─ energyVamplitude.png              # energy vs amplitude 
     │
     └─ cameras_folder
         ├─ event0                 # folder with cameras from event 0 
