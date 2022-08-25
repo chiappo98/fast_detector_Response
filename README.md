@@ -28,7 +28,7 @@ The DUNE experiment is a long-baseline neutrino experiment which is under constr
 The experiment will study neutrino oscillations trying to measure the $\delta_{cp}$ phase of the PMNS matrix and the neutrino mass ordering. It will also be able to detect cosmic neutrinos, providing important information about cosmic ray sources, useful for multimessenger astrophysics.
 
 <center>
-<img src="/images/dune.png" width="200" class="center"/>
+<img src="/images/dune.png" width="500" class="center"/>
 </center>  
 
 DUNE is composed by a Near Detector (ND) and a Far Detector (FD), consisting of a large TPC filled with liquid Argon. The ND has the scope of monitoring the neutrino beam just after its generation and is composed of three sub-detectors: GasAr-TPC, , and the SAND detector.
