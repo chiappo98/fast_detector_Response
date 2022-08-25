@@ -27,12 +27,28 @@ The program gives as output the distribution of photons on each camera, in a drd
 The DUNE experiment is a long-baseline neutrino experiment which is under construction in the US between the Fermilab, where the neutrino beam will be generated, and hte Stanford Underground Research Facility in South Dakota.
 The experiment will study neutrino oscillations trying to measure the $\delta_{cp}$ phase of the PMNS matrix and the neutrino mass ordering. It will also be able to detect cosmic neutrinos, providing important information about cosmic ray sources, useful for multimessenger astrophysics.
 
+<center>
+<img src="/images/dune.png" width="200" class="center"/>
+</center>  
+
 DUNE is composed by a Near Detector (ND) and a Far Detector (FD), consisting of a large TPC filled with liquid Argon. The ND has the scope of monitoring the neutrino beam just after its generation and is composed of three sub-detectors: GasAr-TPC, , and the SAND detector.
+
+<center>
+<img src="/images/nearDetector.png" width="400" class="center"/>
+</center>
 
 SAND in turn has three modules enclosed in a superconducting magnet: a Straw Tube Tracker, an electromagnetic calorimeter and GRAIN.
 
+<center>
+<img src="/images/sand.png" width="400" class="center"/>
+</center>
+
 The GRAIN (GRanular Argon fot Interctions of Neutrinos) module, part of the SAND (System for on-Axis Neutrino Detection) detector of the DUNE experiment, a long-baseline experiment for the detection of artificial and cosmic neutrinos.
 GRAIN is a vessel containing ~1 ton of liquid Argon (LAr) in which neutrinos can interact. The charged particles generated in these interactions move inside the LAr emmitting scintillation light, which is detected by SiPMs placed on the walls of the vessel. As already explained, the SiPMs are arranged in 76 cameras, which consist in 32x32 matrices.
+
+<center>
+<img src="/images/grainCam.png" width="300" class="center"/>
+</center>
 
 # Before starting
 
@@ -317,6 +333,10 @@ The script is executed by the shell script, when all jobs are completed.
 # Output analysis
 The analysis of *response.drdf* can be done using `fast_analysis.py`.
 This program is able to read the drdf file showing the results of the simulations. Since the *sensors.root* file contains also the energy of the incoming photons we can use this information to obtain a calibration coefficient. In particular we plot the energy transported by photons wrt the number of photons detected by SiPMs. This allows to compute the coefficient form which, measuring the number of photons detected we can obtain the energy of the scintillation photons (proportional to the energy of the charged particles generated from neutrino interactions).
+
+<center>
+<img src="/images/cam70.png" width="300" class="center"/>
+</center>  
 
 Another option of *fast_analysis.py* is the possibility to plot the distribution of photons on each camera, for all the simulated events. This is only an option, disabled as default, since it takes a large amount of time. However, once enabled, the images of the 76 cameras of the *N*-th event will be saved in the *event_N* folder, inside *camera_folder*.
 ```bash
