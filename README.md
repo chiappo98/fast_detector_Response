@@ -7,7 +7,7 @@
     - [The drdf module](#the-drdf-module)
   - [Fast Response installation](#fast-response-installation)
   - [Download input files](#download-input-files)
-- [Running fast_resp](#running-fast-resp)
+- [Running fast_resp](#running-fast_resp)
 - [Submission on batch system](#submission-on-batch-system)
   - [HTCondor](#htcondor)
   - [Launching a production](#launching-a-production)
