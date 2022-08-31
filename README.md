@@ -47,8 +47,7 @@ SAND in turn has three modules enclosed in a superconducting magnet: a Straw Tub
 The SAND detector. On the left you can see the GRAIN module surrounded by the ECAL.
 </p>
 
-The GRAIN (GRanular Argon fot Interctions of Neutrinos) module, part of the SAND (System for on-Axis Neutrino Detection) detector of the DUNE experiment, a long-baseline experiment for the detection of artificial and cosmic neutrinos.
-GRAIN is a vessel containing ~1 ton of liquid Argon (LAr) in which neutrinos can interact. The charged particles generated in these interactions move inside the LAr emmitting scintillation light, which is detected by SiPMs placed on the walls of the vessel. As already explained, the SiPMs are arranged in 76 cameras, which consist in 32x32 matrices.
+The GRAIN (GRanular Argon fot Interctions of Neutrinos) module is a vessel containing ~1 ton of liquid Argon (LAr) in which neutrinos can interact. The charged particles generated in these interactions move inside the LAr emmitting scintillation light, which is detected by SiPMs placed on the walls of the vessel. As already explained, the SiPMs are arranged in 76 cameras, which consist in 32x32 matrices.
 
 <p align = "center">
 <img src="/images/grainCam.png" width="300" class="center"/>
