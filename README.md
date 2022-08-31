@@ -31,7 +31,7 @@ The experiment will study neutrino oscillations trying to measure the $\delta_{c
 <img src="/images/dune.png" width="500" class="center"/>
 </p>
 
-DUNE is composed by a Near Detector (ND) and a Far Detector (FD), consisting of a large TPC filled with liquid Argon. The ND has the scope of monitoring the neutrino beam just after its generation and is composed of three sub-detectors: GasAr-TPC, ---------,and the SAND detector.
+DUNE is composed by a Near Detector (ND) and a Far Detector (FD), consisting of a large TPC filled with liquid Argon. The ND has the scope of monitoring the neutrino beam just after its generation and is composed of three sub-detectors: a GAr-TPC, a LAr-TPC, and the SAND detector.
 
 <p align = "center">
 <img src="/images/nearDetector.png" width="400" class="center"/>
@@ -56,6 +56,10 @@ The GRAIN (GRanular Argon fot Interctions of Neutrinos) module is a vessel conta
 <p align = "center">
 View of the GRAIN vessel, with SiPM cameras on its walls.
 </p>
+
+In order to be able to reconstruct the energy of a neutrino event in GRAIN, we should obtain a calibration coefficient to estimate the total deposited energy from the number of the detected photons.
+This program is a first step towards this direction. Unfortunately the comparison of the energy of the event with the total number of photons gives only a rough estimation of the calibration coefficient. The number of photons which reach the SiPMs in fact depends on *where* the energy has been deposited inside the vessel: same events in different positions inside GRAIN generate a different number of photons.
+In order to be more realistic the correct path should be the determination of different coefficients for different volume regions.
 
 # Before starting
 
