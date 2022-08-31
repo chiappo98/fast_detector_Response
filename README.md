@@ -288,7 +288,7 @@ Please note that:
 
 There is also the possibility to run the simulation in backgroud, using the commad
 ```
-nohup bash launch_splitted_response.sh -i <INPUT_file_PATH> -f <OUTPUT_folder_PATH> -d <OUTPUT_folder_NAME> -e <MAX_event_NUMBER> -s <JOB_SIZE> -x <STARTING_EVENT> > out.log &
+nohup bash launch_splitted_response.sh -c <RESPONSE_CONFIG> > out.log &
 ```
 To check how the job proceeds just look inside the *out.log* file.
 
