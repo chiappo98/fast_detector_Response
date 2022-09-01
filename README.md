@@ -119,7 +119,7 @@ At this point, the user may choose between two possibilities:
 - Execute *fast_resp.py* on neutrino-01.
 - Execute *splitted_resp.py*  submitting one or more jobs to HTCondor.
 
-In the first case the user may simply follow instructions provided in section [Running fast_resp](#running-fast-resp). 
+In the first case the user may simply follow instructions provided in section [Running fast_resp](#running-fast_resp). 
 
 In order to work with HTCondor (exploiting its adavntages) instead, `splitted_fast_resp.py` and `launch_splitted_response.sh` are provided to the user. They represent a fast and easy way to submit jobs on the batch system and retrive information on their status, creating at the same time new folders to store the response output.
 
@@ -139,9 +139,9 @@ This means that analysing the second file the user will simulate three different
 
 It's important to konw how many events a *sensors.root* file contains, in order to set the correct parameters for the simulation.
 
-Since they are quite heavy files, they are stored on my personal Google Drive. I shared them so that using the commands below everyone will be able to download them directly into the preferre folder on neutrino-01.
+Since they are quite heavy files, they are stored on my personal Google Drive. I shared them so that using the commands below everyone will be able to download them directly into the preferred folder on neutrino-01.
 
-So, first of all, create a dedicated folder for the file, if possible in the same location of the cloned repository. I suggest to create an `input_file` directory with dedicated folders inside
+The first step hence should be the creation of a dedicated folder for the file, if possible in the same location of the cloned repository. I suggest to create an `input_file` directory with dedicated folders inside
 ```
 mkdir /storage/gpfs_data/neutrino/SAND-LAr/../input_file
 mkdir /storage/gpfs_data/neutrino/SAND-LAr/../input_file/3_events
@@ -174,7 +174,7 @@ As done before, I suggest to create a dedicated folder
 mkdir /storage/gpfs_data/neutrino/SAND-LAr/../input_file/edepsimFile
 ```
 
-The download is started with the following command
+The download starts with the following command
 ```
 wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1P21O8OJ-OuY4Cc_FH7n7S7VILYBPA2ZP' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1P21O8OJ-OuY4Cc_FH7n7S7VILYBPA2ZP" -O 1000_numu_in_GRAIN.edep_sim.root && rm -rf /tmp/cookies.txt
 ```
