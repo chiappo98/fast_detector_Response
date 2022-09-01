@@ -4,7 +4,7 @@
         <parameter name="celledge" value="0.1" unit="mm"/>
         <parameter name="matrix" value="(32,32)"/>
         <parameter name="zplane" value="0.5" unit="mm"/>
-	<parameter name="integrTime" value="200" unit="ns"/>
+	<parameter name="integrTime" value="500" unit="ns"/>
         <parameter name="phgain" value="0.10" />
         <parameter name="pde127nm" value="0.25" />
         <parameter name="pcross" value="0.07"/> 
