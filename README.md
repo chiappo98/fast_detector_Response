@@ -1,6 +1,7 @@
 # Table of contents
 - [Fast detector response](#fast-detector-response)
-- [The physics case](#the-physics-case)
+  - [The physics case](#the-physics-case)
+  - [How it works](#how-it-works)
 - [Before starting](#before-starting)
   - [Account request](#account-request)
   - [Required softwares](#required-softwares)
@@ -13,16 +14,15 @@
   - [Launching a production](#launching-a-production)
     - [Input file](#input-file)
     - [Job size](#job-size)
+    - [Response configuration](#response-configuration)
     - [Production folder](#production-folder)
 - [Output analysis](#output-analysis)
 
 # Fast detector response
 
-The aim of this program is to simulate the readout system of the GRAIN detector, a vessel filled with liquid Argon (LAr) and surrounded by Silicon Photomultiplier (SiPM) sensors. It is part of the DUNE experiment, devoted to neutrino detection. In GRAIN, SiPMs are arranged in 76 matrices (called cameras) of 32x32 sensors each, covering the internal walls of the vessel. Their scope is to detect the scintillation light produced by charged particles generated from neutrino interactions. 
+The aim of this program is to simulate the front-end readout system of the GRAIN detector, a vessel filled with liquid Argon (LAr) and surrounded by Silicon Photomultiplier (SiPM) sensors. It is part of the DUNE experiment, devoted to neutrino detection. In GRAIN, SiPMs are arranged in 76 matrices (called cameras) of 32x32 sensors each, covering the internal walls of the vessel. Their scope is to detect the scintillation light produced by charged particles generated from neutrino interactions. 
 
-The program gives in output the distribution of photons on each camera, and is able to compare the total number of detected photons with the energy deposited by charged particles.
-
-# The physics case
+## The physics case
 
 The Deep Underground Neutrino Experiment (DUNE) is a long-baseline neutrino experiment which is under construction in the US between Fermilab, where the neutrino beam will be generated, and the Stanford Underground Research Facility in South Dakota.
 The experiment will study neutrino oscillations trying to measure the $\delta_{cp}$ phase of the PMNS matrix and will try to discriminate neutrino mass ordering. It will also be able to detect cosmic neutrinos, providing important information about cosmic ray sources, useful for multimessenger astrophysics.
@@ -60,6 +60,22 @@ View of the GRAIN vessel, with SiPM cameras on its walls.
 In order to be able to reconstruct the energy of a neutrino event in GRAIN, we should obtain a calibration coefficient to estimate the total deposited energy from the number of the detected photons.
 This program makes a first step in this direction. Unfortunately the comparison of the energy of the event with the total number of photons gives only a rough estimation of the calibration coefficient. The number of photons which reach the SiPMs in fact depends on *where* the energy has been deposited inside the vessel: same events in different positions inside GRAIN generate a different number of photons.
 In order to be more realistic the correct path should be the determination of different coefficients for different volume regions.
+
+## How it works
+
+The read-out chain for a SiPM detector is made of different steps. This program aims to produce only a fast and rough simulation of the photon detection on SiPM sensors. Among all scintillation photons produced, the ones which are effectively detected constitute only a small fraction. Supposing that the propagation of the photons has been already simulated, those photons which manage to reach the walls of the detector may or may not be detected.
+
+The limiting factors I considered for the simulation are:
+* photons do not hit a camera
+* photons hit a camera but not the active area of the sensors
+* SiPMs have a Photon Detection Efficiency (for photons with $\lambda = 127nm$ it has been estimated to be around 25%)
+* in the analysis we keep only photons which arrived in a time window of 500 ns
+* when a photons is detected it may induce a signal in a nearby sensor: this cross-talk probability is of the order of 7%
+* when a photon is detected the amplitude of the signal produced is not constant but has some 'smearing'
+
+Few more words about the last point: in this simulation I assumed that when a photon is detected it produces a signal of amplitude 1 (a.u.), which can than have some osillations in gain; to take into account this fact I introduced a gaussian 'smearing' on the photon amplitude, with $\sigma = 0.10$. In practice I skipped all the processing of the real signal waveform, but again, the aim of the program is to have a fast simulation and this step would have been computationally very expensive. 
+
+At the end the program gives in output the distribution of photons on each camera, so that we are able then to compare the total number of detected photons with the energy deposited by charged particles.
 
 # Before starting
 
@@ -186,20 +202,18 @@ The submission comand therefore is
 ```
 python3 fast_resp.py <config_file> <input_ROOT_file> <output_drdf_file> -nc -e <event_number> -s <start_event> -i <idrun>
 ```
-where 
+
 - `config_file`: contains some parameters for the DAQ simulation, such as the PDE and cross-talk probability for the SiPM sensors, togheter with their physical dimensions. The file name is *config.xml*.
-- `input_ROOT_file`: a file named *sensors.root*, which contains all the information about the photons propagating from the charged particles trajetories towards the sensors surface. In particular it provides the energy, arrival time and inpact coordinates of each photon.
-- `output_drdf_file`: a file named *response.drdf*. It is an image file in a custom-made format. The single response.drdf file contains the 2D plot of all the sensor matrices with the number of photons detected on each SiPM and the arrival time of the first one of them.
+- `input_ROOT_file`: a file named *sensors.root*, which contains all the information about the photons propagating from the charged particles trajectories towards the sensors surface. In particular it provides the energy, arrival time and impact coordinates of each photon.
+- `output_drdf_file`: a file named *response.drdf*.
 - `-nc` option: this options allows the user to retrive the total number of photons arrived on each SiPM without considering, for example, PDE or cross-talk.
 - `-e` option: allows the user to specify the number of event to be computed, if different from the total one.
 - `-s` option: allows the user to specify the starting event, if different from 0. To be used *only* if the number of event is *smaller* than the total one.
 - `-i` option: run identifier (UUID)
 
-The input file is obtained through the processing, with other sofwares, of the GEANT4 simulation of a neutrino interaction inside liquid Argon. This leads to the sensors.root file. Since they are not the result of my work I won't upload here the softwares whole simulation chain.
-
 # Submission on batch system
 
-Through CNAF the user can get access to the INFN computing centre, exploiting the use of Grid technology. It is in this constest that the creation of a fast detector response makes sense, since the term 'fast' derives from the possibility to run many simulations in parallel. HTCondor helps to accomplish this task, since it is a specialized batch system for managing compute-intensive jobs, providing a queuing mechanism, scheduling policy, priority scheme, and resource classifications. 
+Through CNAF the user can get access to the INFN computing centre, exploiting the use of Grid technology. It is in this constest that the creation of a fast detector response makes sense, since the term 'fast' derives also from the possibility to run many simulations in parallel. HTCondor helps to accomplish this task, since it is a specialized batch system for managing compute-intensive jobs, providing a queuing mechanism, scheduling policy, priority scheme, and resource classifications. 
 
 ## HTCondor
 
@@ -296,7 +310,7 @@ To check how the job proceeds just look inside the *out.log* file.
 
 ### Configuration file
 
-This repository contains a *configs* folder: it must be used to store the various configuration files. Each *config.txt* must be put inside a new folder with a specific name. That name will be also the name of the production directory which will be created to store the output of the simulation.
+This repository contains a *configs* folder: it must be used to store the various configuration files. Each *config.txt* must be put inside a new folder with a specific name. **That name will be also the name of the production directory which will be created to store the output of the simulation**.
 
 ### Input file
 
@@ -314,6 +328,13 @@ The jobSize parameter is used to define the number of events to be simulated in 
 The number of jobs is computed as `eventNumber/jobSize`.
 
 For each job, different output files will be generated. The name of the files will be followed by the number of the job, *i.e. response_10.drdf*.
+
+### Response configuration
+
+As I explained in the [How it works](#how-it-works) section, the simulation of the detector response is done considering several characteristics of the sensors, such as the dimesions of the cameras, PDE and cross-talk probability, etc.
+
+These parameters are stored in a `config.xml` file. The user is free to modify them according to the pysical properties of the sensors (which may change); in that my suggestion again is to create a *response_configs* folder to store the different configurations.
+
 
 ### Production folder
 
@@ -354,8 +375,15 @@ As already said, the *response_N.drdf* files are the output of the *N* submitted
 
 The script is executed by the shell script, when all jobs are completed.
 
-# Output analysis
+# Output analysis 
+
 The analysis of *response.drdf* can be done using `fast_analysis.py`.
+
+In case of submission from HTCondor, fast_analysis can be enabled setting 'yes' the option *FastAnalysis* in the configuration file. The program however can be run independently using the command
+```
+python3 fast_analysis.py <PATH/TO/response.drdf> <EDEPSIMFILE> <PATH/TO/OUTPUT/FOLDER> <EVENT_NUMBER> <STARTING_EVENT> <PLOT_CAMERAS/YES/NO>
+```
+
 This program is able to read the drdf file showing the results of the simulations. In particular we plot the energy deposited by charged particles wrt the number of photons detected by SiPMs. This allows to compute a calibration coefficient form which, measuring the number of photons detected we can obtain the energy deposited inside the LAr volume.
 
 The energy deposit is read from *1000_numu_in_GRAIN.edep_sim.root*, paying attention to select the same events that has been simulated in the detector response.
