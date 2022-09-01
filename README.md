@@ -18,26 +18,26 @@
 
 # Fast detector response
 
-The aim of this program is to simulate the readout system of the GRAIN detector, a vessel filled with liquid Argon and surrounded by Silicon Photomultiplier (SiPM) sensors, whose scope is the measurement of neutrino energy. SiPMs are arranged in 76 matrices (called cameras) of 32x32 sensors each, covering the internal walls of a vessel containing a scintillating material. Their scope is to detect the scintillation light produced by a charged particles (generated from neutrino interactions). 
+The aim of this program is to simulate the readout system of the GRAIN detector, a vessel filled with liquid Argon (LAr) and surrounded by Silicon Photomultiplier (SiPM) sensors. It is part of the DUNE experiment, devoted to neutrino detection. In GRAIN, SiPMs are arranged in 76 matrices (called cameras) of 32x32 sensors each, covering the internal walls of the vessel. Their scope is to detect the scintillation light produced by charged particles generated from neutrino interactions. 
 
 The program gives in output the distribution of photons on each camera, and is able to compare the total number of detected photons with the energy deposited by charged particles.
 
 # The physics case
 
-The DUNE experiment is a long-baseline neutrino experiment which is under construction in the US between Fermilab, where the neutrino beam will be generated, and the Stanford Underground Research Facility in South Dakota.
+The Deep Underground Neutrino Experiment (DUNE) is a long-baseline neutrino experiment which is under construction in the US between Fermilab, where the neutrino beam will be generated, and the Stanford Underground Research Facility in South Dakota.
 The experiment will study neutrino oscillations trying to measure the $\delta_{cp}$ phase of the PMNS matrix and will try to discriminate neutrino mass ordering. It will also be able to detect cosmic neutrinos, providing important information about cosmic ray sources, useful for multimessenger astrophysics.
 
 <p align = "center">
 <img src="/images/dune.png" width="500" class="center"/>
 </p>
 
-DUNE is composed by a Near Detector (ND) and a Far Detector (FD), consisting of a large TPC filled with liquid Argon. The ND has the scope of monitoring the neutrino beam just after its generation and is composed of three sub-detectors: a GAr-TPC, a LAr-TPC, and the SAND detector.
+DUNE is composed by a Near Detector (ND) and a Far Detector (FD), this latter consisting of a large TPC filled with liquid Argon. The ND has the scope of monitoring the neutrino beam just after its generation; it is composed of three sub-detectors: a GAr-TPC, a LAr-TPC, and the SAND detector.
 
 <p align = "center">
 <img src="/images/nearDetector.png" width="400" class="center"/>
 </p>
 
-SAND in turn has three modules enclosed in a superconducting magnet: a Straw Tube Tracker, an electromagnetic calorimeter and GRAIN.
+SAND is divided into three modules enclosed in a superconducting magnet: a Straw Tube Tracker, an electromagnetic calorimeter and GRAIN.
 
 <p align = "center">
 <img src="/images/sand.png" width="500" class="center"/>
@@ -47,7 +47,7 @@ SAND in turn has three modules enclosed in a superconducting magnet: a Straw Tub
 The SAND detector. On the left you can see the GRAIN module surrounded by the ECAL.
 </p>
 
-The GRAIN (GRanular Argon fot Interctions of Neutrinos) module is a vessel containing ~1 ton of liquid Argon (LAr) in which neutrinos can interact. The charged particles generated in these interactions move inside the LAr emmitting scintillation light, which is detected by SiPMs placed on the walls of the vessel. As already explained, the SiPMs are arranged in 76 cameras, which consist in 32x32 matrices.
+The GRanular Argon fot Interctions of Neutrinos (GRAIN) module is a vessel containing ~1 ton of liquid Argon in which neutrinos can interact. The charged particles generated in these interactions move inside LAr emmitting scintillation light, which is detected by SiPMs placed on the walls of the vessel. As already explained, the SiPMs are arranged in 76 cameras, which consist in 32x32 matrices.
 
 <p align = "center">
 <img src="/images/grainCam.png" width="300" class="center"/>
@@ -58,13 +58,13 @@ View of the GRAIN vessel, with SiPM cameras on its walls.
 </p>
 
 In order to be able to reconstruct the energy of a neutrino event in GRAIN, we should obtain a calibration coefficient to estimate the total deposited energy from the number of the detected photons.
-This program is a first step towards this direction. Unfortunately the comparison of the energy of the event with the total number of photons gives only a rough estimation of the calibration coefficient. The number of photons which reach the SiPMs in fact depends on *where* the energy has been deposited inside the vessel: same events in different positions inside GRAIN generate a different number of photons.
+This program makes a first step in this direction. Unfortunately the comparison of the energy of the event with the total number of photons gives only a rough estimation of the calibration coefficient. The number of photons which reach the SiPMs in fact depends on *where* the energy has been deposited inside the vessel: same events in different positions inside GRAIN generate a different number of photons.
 In order to be more realistic the correct path should be the determination of different coefficients for different volume regions.
 
 # Before starting
 
-It is possile to run the simulation of the detector response both on a local device or on a remote machine. 
-However, to simulate efficiently a large number of events it is much more conveninet to rely, if possible, on distributed computing, which allows for a faster execution time exploiting the possibility of running multiple events at the same time. In particular I used the HTCondor batch system (more on this in section [HTCondor](#htcondor)).
+It is possible to run the simulation of the detector response both on a local device or on a remote machine. 
+However, to simulate efficiently a large number of events it is much more convenient to rely, if possible, on distributed computing, which allows for a faster execution time exploiting the possibility of running multiple events at the same time. In particular I used the HTCondor batch system (more on this in section [HTCondor](#htcondor)).
 
 In order to be able to run the simulation of the detector response, few steps are required:
 - own an account to access a machine within the pool that may submit jobs, termed a submit machine
@@ -73,7 +73,7 @@ In order to be able to run the simulation of the detector response, few steps ar
 
 ## Account request
 
-In order submit the detector response on HTCondor, an account to access the submit machine is needed. Working on the detector response I access via ssh the Tier-1 user interfaces (UI) connecting to *bastion.cnaf.infn.it*, the CNAF gateway. I use in particular the experiment dedicated UI called *neutrino-01* machine (16core/8GB ram), which CNAF kindly provided to the DUNE collaboration, to which I belong to. The machine is reachable with ip 131.154.161.32 from *bastion.cnaf.infn.it*.
+In order submit the detector response on HTCondor, an account to access the submit machine is needed. Working on the detector response I access via ssh the Tier-1 user interfaces (UI) connecting to *bastion.cnaf.infn.it*, the CNAF gateway. I use in particular the experiment dedicated UI called *neutrino-01* machine (16core/8GB ram), which CNAF kindly provided to the DUNE collaboration, to which I belong. The machine is reachable with ip 131.154.161.32 from *bastion.cnaf.infn.it*.
 
 [Here](https://confluence.infn.it/pages/viewpage.action?pageId=40665299) you can find more information on INFN-CNAF Tier-1.
 
@@ -84,14 +84,14 @@ In *launch_splitted_response.sh*, lines 144-148 and 154, the user who it's not l
 
 ## Required softwares
 
-On the file system of the submit machine Pyhton3 has to be installed. Looking at thefirst lines of the py programs in this repository users can check the additional modules which are needed (in particular I underline the need for the PyROOT module).
+On the file system of the submit machine Pyhton3 has to be installed. Looking at the first lines of the py programs in this repository users can check the additional modules which are needed (in particular I underline the need for the PyROOT module).
 
-The only software which is not available publicly is the drdf package, necessary to build the output files. 
+The only software which is not a standard Python package is the drdf package, necessary to build the output files. 
 Installing this repository the user will get automaticly the `drdf.py` file. For the ones who have access to GIT repositories at *baltig.infn.it* (you need to be registered as guest at INFN - Sezione di Bologna), the same software is available [here](https://baltig.infn.it/dune/sand-optical/drdf).
 
 ### The drdf module
 
-*drdf* is a custom image format created by Nicolò Tosi (INFN - Section of Bologna) in order to store efficiently a high number of images, from multiple events. From a single event in fact we obtain 2x76 images, since 76 is the number of cameras in the GRAIN detector, and for each of them we store 2 images of size 32x32 pixels.
+*drdf*, which stands for 'Detector Response Data Format', is a custom image format created by Nicolò Tosi (INFN - Section of Bologna) in order to store efficiently a high number of images, from multiple events. From a single event in fact we obtain 2x76 images, since 76 is the number of cameras in the GRAIN detector, and for each of them we store 2 images of size 32x32 pixels.
 The two images store respectively the amplitude (number of photons detected) of each pixel and the arrival time of the first photon, again on each pixel.
 A drdf file stores images labelled with their *uuid*, *event*-number, *camera*-number; the information contained in every camera can be retrived calling each specific pixel through its number (from 0 to 1023).
 
