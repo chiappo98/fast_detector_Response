@@ -54,16 +54,12 @@ function check_condor() {
       if [[ $JOB_STATUS == "4" ]]; then
         ((COMPLETED++))
       elif [[ $JOB_STATUS == "1" ]]; then 
-#        .log 7 "Job $i is IDLE."
         ((IDLE++))
       elif [[ $JOB_STATUS == "2" ]]; then 
-#        .log 7 "Job $i is RUNNING."
         ((RUNNING++))
       elif [[ $JOB_STATUS == "5" ]]; then
-#        .log 7 "Job $i is HOLD."
         ((HOLD++))
       else 
-#        .log 7 "Job $i is in status $JOB_STATUS."
         ((UNKOWN++))
       fi
     done
@@ -115,7 +111,7 @@ check_errors
 touch $SCRIPT_FOLDER/config.txt
 > $SCRIPT_FOLDER/config.txt
 echo "${RESPONSE_CONFIG}" >> "$SCRIPT_FOLDER/config.txt"                        #configfile
-echo "${INPUTFILE}" >> "$SCRIPT_FOLDER/config.txt"                          #path to sensors.root  ---------------->>>>could take as input also the sensor_${ID}.root
+echo "${INPUTFILE}" >> "$SCRIPT_FOLDER/config.txt"                          #path to sensors.root  
 echo "${OUTPUT_FOLDER}/response.drdf" >> "$SCRIPT_FOLDER/config.txt"    #output file name
 echo "False" >> "$SCRIPT_FOLDER/config.txt"                            #no-cut option
 echo "1" >> "$SCRIPT_FOLDER/config.txt"                        #jobNumber
