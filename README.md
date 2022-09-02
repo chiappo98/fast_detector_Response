@@ -111,7 +111,7 @@ Installing this repository the user will get automaticly the `drdf.py` file. For
 The two images store respectively the amplitude (number of photons detected) of each pixel and the arrival time of the first photon, again on each pixel.
 A drdf file stores images labelled with their *uuid*, *event*-number, *camera*-number; the information contained in every camera can be retrived calling each specific pixel through its number (from 0 to 1023).
 
-In the *drdf_test* folder the user can find two useful tutorials for reading and writing a drdf file, from which it is possible to better understand the structure of the file.
+In the */drdf/tests* folder the user can find two useful tutorials for reading and writing a drdf file, from which it is possible to better understand the structure of the file.
 
 ## Fast response installation
 
