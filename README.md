@@ -200,12 +200,12 @@ wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download
 In order to run the detector response on the neutrino-01 machine, *fast_resp.py* must be used. It takes in input 3 parameters and has 4 additional options.
 The submission comand therefore is
 ```
-python3 fast_resp.py <config_file> <input_ROOT_file> <output_drdf_file> -nc -e <event_number> -s <start_event> -i <idrun>
+python3 fast_resp.py <path/to/config_file> <path/to/input_ROOT_file> <path/to/output_drdf_file> -nc -e <event_number> -s <start_event> -i <idrun>
 ```
 
 - `config_file`: contains some parameters for the DAQ simulation, such as the PDE and cross-talk probability for the SiPM sensors, togheter with their physical dimensions. The file name is *config.xml*.
 - `input_ROOT_file`: a file named *sensors.root*, which contains all the information about the photons propagating from the charged particles trajectories towards the sensors surface. In particular it provides the energy, arrival time and impact coordinates of each photon.
-- `output_drdf_file`: a file named *response.drdf*.
+- `output_drdf_file`: a drdf file usually named *response.drdf*.
 - `-nc` option: this options allows the user to retrive the total number of photons arrived on each SiPM without considering, for example, PDE or cross-talk.
 - `-e` option: allows the user to specify the number of event to be computed, if different from the total one.
 - `-s` option: allows the user to specify the starting event, if different from 0. To be used *only* if the number of event is *smaller* than the total one.
@@ -251,8 +251,8 @@ python3 splitted_fast_resp.py <config_file>
 The configuration file has the following structure:
 ```makefile
 <configfile>      #configuration .xml file
-<fname>           #simulation output .root file
-<wfile>           #output .drdf file
+<fname>           #input sensors.root file
+<wfile>           #output response.drdf file
 <nocut>           #count total number of photons  (True or False)
 <jobNumber>       #number of current job
 <jobSize>         #size of submitted job 
@@ -270,9 +270,9 @@ These configuration parameters are written in the configuration file by *launch_
 
 Once logged on neutrino-01 you can launch the detector response through the shell script with the following command
 ```
-bash launch_splitted_response.sh -c <RESPONSE_CONFIG>
+bash launch_splitted_response.sh -c <CONFIGURATION_FILE>
 ```
-where *<RESPONSE_CONFIG>* is a *txt* file (different from the one used for the splitted fast response) containing all the configuration parameters for starting the production. 
+where *<CONFIGURATION_FILE>* is a *txt* file (different from the one used for the splitted fast response) containing all the configuration parameters for starting the production. 
 The file must be compiled by the user according to the followig structure:
 ```makefile
 inputFile = /path/to/input/file
@@ -286,7 +286,7 @@ FastAnalysis = <yes/no>
 PlotCameras = <yes/no>
 ```
 * `inputFile` must be an absolute path to *sensors.root*.
-* `ProductionFolder` must be an absolute path to the output folder (output folder not included).
+* `ProductionFolder` must be an absolute path to the output folder (without the output folder name).
 * `eventNumber` must be the number of events to simulate in the detector Response simulation.
 * `jobSize` is used to set the number of events to simulate in every job (and the number of submitted jobs as a consequence).
 * `startingEvent` is used to choose the starting entry of the file.
@@ -302,7 +302,7 @@ Please note that:
 
 There is also the possibility to run the simulation in backgroud, using the commad
 ```
-nohup bash launch_splitted_response.sh -c <RESPONSE_CONFIG> > out.log &
+nohup bash launch_splitted_response.sh -c <CONFIGURATION_FILE> > out.log &
 ```
 To check how the job proceeds just look inside the *out.log* file.
 
