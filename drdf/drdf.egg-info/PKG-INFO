@@ -1,0 +1,13 @@
+Metadata-Version: 2.1
+Name: drdf
+Version: 0.1.0
+Summary: Detector Response Data Format library
+Home-page: https://baltig.infn.it/sipmat/drdf
+Author: Nicolo Tosi
+Author-email: nicolo.tosi@bo.infn.it
+License: UNKNOWN
+Description: Detector Response Data Format
+        
+Platform: UNKNOWN
+Requires-Python: >=3.6, <4
+Description-Content-Type: text/markdown

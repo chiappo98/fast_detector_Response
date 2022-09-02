@@ -1,0 +1,7 @@
+README.md
+setup.py
+drdf/__init__.py
+drdf.egg-info/PKG-INFO
+drdf.egg-info/SOURCES.txt
+drdf.egg-info/dependency_links.txt
+drdf.egg-info/top_level.txt
