@@ -92,7 +92,7 @@ def count_photons(time, ch, config ):                                           
         phlist.append(count_result)                                   
     return phlist
 
-def count_photons_no_cut(photons, config ):                                           
+def count_photons_no_cut(time, ch, config ):                                           
     """considers simply the total number of photons reaching each camera"""
     phlist = []
     for c in range(1024):
