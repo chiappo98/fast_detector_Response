@@ -209,7 +209,7 @@ python3 fast_resp.py <config_file> <input_ROOT_file> <output_drdf_file> -nc -e <
 - `-nc` option: this options allows the user to retrive the total number of photons arrived on each SiPM without considering, for example, PDE or cross-talk.
 - `-e` option: allows the user to specify the number of event to be computed, if different from the total one.
 - `-s` option: allows the user to specify the starting event, if different from 0. To be used *only* if the number of event is *smaller* than the total one.
-- `-i` option: run identifier (UUID)
+- `-i` option: run identifier (UUID format)
 
 # Submission on batch system
 
